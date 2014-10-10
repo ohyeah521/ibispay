@@ -7,13 +7,16 @@ Mac翻墙教程
 
 直切主题，mac下最简单的翻墙方法：
 
-第一步：购买一台国外服务器
-推荐linode.com日本服务器和digitalocean.com旧金山服务器。
-两个服务器速度都巨快，看youtube1080p完全没问题。
-linode10美元/月有2000G流量，不过根据我实际测试，用到15G之后，速度开始变慢到不超过100KB/s;
-digitalocean只要5美元/月，1000G流量，流量使用情况会不会和linode一样，还在测试中。
+第一步：购买一台国外服务器,可以参考以下几个选择：
 
-linode只支持信用卡付款。digitalocean支持Paypal和信用卡2种付款方式。
+linode.com
+(4分 2000G流量／新机器速度快且稳定，使用10到20G后速度变慢／换机器方便／60元／只支持信用卡）
+
+digitalocean.com
+(4分 1000G流量／速度快但不稳定／换机器方便／30元）
+
+locvps.com
+(3.5分：500G流量／速度快且稳定／机器少，换机器ip不方便／40~60元)
 
 第二步：在chrome浏览器上安装switchsharp插件
 google插件没法下载的话，可以用百度搜索“switchsharp ”下载后安装（翻墙后就无视百度了）。
@@ -26,11 +29,23 @@ google插件没法下载的话，可以用百度搜索“switchsharp ”下载�
 
 第四步：大功告成，把switchsharp切换到蓝色，访问YouTube.com试试！
 
-还有困难？可以请教cooerson。
+第五步(可选)：ssh容易断开？输入ip太长？打开finder，按住command+shift+g，输入~/.ssh回车，编辑config文件（没有自己新建一个）：
+
+#解决断开问题
+ServerAliveInterval 60
+
+#VPS config
+Host vps
+HostName 173.230.155.72
+User root
+DynamicForward 1080
+
+#保存退出，直接在终端输入ssh vps,即可连接
+
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-愿意加入跟随热情的大party的同学，愿意一起建设组织的朋友，联系我。
+共享：github.com/FollowYourPassion
+邮箱：cooerson1@gmail.com
 微信：cooerson
-email：cooerson1@gmail.com
 
 2014.09.16
