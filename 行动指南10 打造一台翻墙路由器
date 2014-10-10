@@ -1,0 +1,317 @@
+打造一台翻墙路由器
+
+凡是连上wifi的手机电脑，无需任何设置，都能自动翻墙。
+
+
+=========================
+一：
+首先路由器型号需要在openwrt列表中：http://wiki.openwrt.org/toh/start。(可以ctrl+F搜索匹配型号)
+如果没有可以买一台，能刷openwrt系统的就行。
+
+淘宝上"华为HG255D"只要45块钱左右就能买到，
+文中用的是"网件NETGEAR 3700v4"，家庭级不到300块，
+如果是小公司可以用神器"思科Linksys WRT1900AC"，淘宝上1700左右，能带100个机器。
+
+-------------------------
+二：
+然后需要一台国外的服务器，可以参考以下几个选择：
+
+linode.com
+(4分 2000G流量／新机器速度快且稳定，使用10到20G后速度变慢／换机器方便／60元／只支持信用卡）
+
+digitalocean.com
+(4分 1000G流量／速度快但不稳定／换机器方便／30元）
+
+locvps.com
+(3.5分：500G流量／速度快且稳定／机器少，换机器ip不方便／40~60元)
+
+文中所用服务器系统是CentOS。
+
+-------------------------
+三：
+服务器端安装shadowsocks
+
+1.CentOS安装shadowsocks
+
+yum install m2crypto python-setuptools
+easy_install pip
+pip install shadowsocks
+
+# 修改配置 vi /etc/shadowsocks.json
+
+{
+    "server":"0.0.0.0",
+    "server_port":7236,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"你的密码",
+    "timeout":300,
+    "method":"rc4-md5",
+    "fast_open": false,
+    "workers": 1
+}
+
+＃保存退出
+
+2.centos后台运行shadowsocks:
+
+# 若未安装supervisor,安装
+yum install python-setuptools
+easy_install supervisor
+
+# 创建默认配置：
+echo_supervisord_conf > /etc/supervisord.conf
+
+vi /etc/supervisord.conf
+# 在默认配置文件后添加：
+[program:shadowsocks]
+command=ssserver -c /etc/shadowsocks.json
+autostart=true
+autorestart=true
+user=nobody
+
+# 在 /etc/default/supervisor 最后加一行
+ulimit -n 51200
+
+# 最后启动就行了：
+supervisord
+
+# 更新重启：
+pip install --upgrade shadowsocks
+supervisorctl restart shadowsocks
+
+(参考 https://github.com/clowwindy/shadowsocks/wiki/%E7%94%A8-Supervisor-%E8%BF%90%E8%A1%8C-Shadowsocks)
+
+-------------------------
+四：
+路由器安装ShadowSocks-libev
+具体方案：ShadowSocks-libev + ChinaDNS + iptable
+
+
+1.下载安装包 http://sourceforge.net/projects/openwrt-dist/files/shadowsocks-libev/
+	或者 自己在CentOS下编译安装包：
+
+# 使用非root用户编译
+su user
+
+# 安装依赖
+yum update
+sudo yum groupinstall 'Development Tools’
+
+# 下载openwrt源码并赋予文件夹权限
+git clone git://git.openwrt.org/openwrt.git
+sudo chmod -R 777 openwrt
+
+# At OpenWRT build root,下载shadowsocks-libev源码
+cd openwrt
+pushd package
+git clone https://github.com/madeye/shadowsocks-libev.git
+popd
+
+# 更新feeds
+./scripts/feeds update -a
+./scripts/feeds install -a    
+make defconfig
+
+# 编译要用到的工具和库
+make prereq && make tools/install && make toolchain/install
+
+# Enable shadowsocks-libev in network category 
+make menuconfig
+
+# Optional
+make -j
+
+# Build the package
+make V=99 package/shadowsocks-libev/openwrt/compile
+
+# 文件位置在 openwrt/bin/ar71xx/packages/base/shadowsocks-libev-polarssl_1.4.8_ar71xx.ipk
+
+
+2.安装到路由器
+
+# 上传到路由器 或者 使用ftp客户端上传
+scp shadowsocks-libev-polarssl_1.4.8_ar71xx.ipk root@192.168.1.1:/tmp/
+# 若未开启sftp，开启使用 SFTP 客户端上传功能，再上传
+opkg update
+opkg install vsftpd openssh-sftp-server
+/etc/init.d/vsftpd enable
+/etc/init.d/vsftpd start
+
+
+# 安装
+cd /tmp
+opkg install shadowsocks-libev-polarssl_1.4.8_ar71xx.ipk 
+
+# 通过vi /etc/shadowsocks.json打开后，编辑
+
+{
+    "server":"服务器ip",
+    "server_port":7236,
+    "local_port":1080,
+    "password":"你的密码",
+    "timeout":300,
+    "method":"rc4-md5"
+}
+
+# 测试，在浏览器配置类似 SwichySharp 的插件或系统下设置 Socks5 代理测试 ShadowSocks 是否正常运行
+# 浏览器代理地址192.168.1.1，端口1080
+ss-local -c /etc/shadowsocks.json 
+
+
+3.翻墙成功了，但还需要手动设置代理，用ipset配合dnsmasq实现路由器下所有设备自动流量分流。
+
+# 配置 iptable 前，先检查下自己的 OpenWRT 中是否已经安装iptables-mod-nat-extra，若没有，先安装。
+
+opkg update
+opkg install iptables-mod-nat-extra
+
+# 安装后继续
+cd /usr/bin
+touch shadowsocks-firewall
+
+# 通过vi shadowsocks-firewall命令配置文件
+# 将下列内容复制进去：
+
+#!/bin/sh
+
+#create a new chain named SHADOWSOCKS
+iptables -t nat -N SHADOWSOCKS
+
+# Ignore your shadowsocks server's addresses
+# It's very IMPORTANT, just be careful.
+
+iptables -t nat -A SHADOWSOCKS -d 173.230.155.72 -j RETURN
+
+# Ignore LANs IP address
+iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 240.0.0.0/4 -j RETURN
+
+# Ignore Asia IP address
+iptables -t nat -A SHADOWSOCKS -d 1.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 14.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 27.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 36.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 39.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 42.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 49.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 58.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 59.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 60.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 61.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 101.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 103.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 106.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 110.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 111.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 112.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 113.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 114.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 115.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 116.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 117.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 118.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 119.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 120.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 121.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 122.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 123.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 124.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 125.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 126.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 169.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 175.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 180.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 182.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 183.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 202.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 203.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 210.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 211.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 218.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 219.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 220.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 221.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 222.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 223.0.0.0/8 -j RETURN
+
+# Anything else should be redirected to shadowsocks's local port
+iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports 1080 
+# Apply the rules
+iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
+
+# 保存退出，chmod +x shadowsocks-firewall给其运行权限。
+# 注意：服务器地址"173.230.155.72"换成自己的服务器地址,local_port:1080
+
+
+# 修改启动配置vi /etc/init.d/shadowsocks
+
+START=95
+
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+CONFIG=/etc/shadowsocks.json
+
+start() {
+        service_start /usr/bin/ss-redir -c /etc/shadowsocks.json
+        service_start /usr/bin/ss-tunnel -c /etc/shadowsocks.json -l 8964 -L 8.8.8.8:53 -u
+        /usr/bin/shadowsocks-firewall
+}
+
+stop() {
+    service_stop /usr/bin/ss-redir
+    service_stop /usr/bin/ss-tunnel
+    /etc/init.d/firewall restart
+}
+
+# 保存退出
+
+
+4.解决dns污染
+
+# 下载chinaDNS http://sourceforge.net/projects/chinadns/files/dist/
+# 上传到/tmp安装
+
+cd /tmp
+opkg install ChinaDNS-C_1.0.0_ar71xx.ipk  # 安装
+/etc/init.d/chinadns start                # 运行
+/etc/init.d/chinadns enable               # 开机启动
+
+
+5.启动shadowsocks
+
+chmod +x /etc/init.d/shadowsocks # 添加执行权限
+/etc/init.d/shadowsocks start    # 运行
+/etc/init.d/shadowsocks enable   # 开机启动
+
+
+重启路由器，大功告成！
+
+/etc/init.d/shadowsocks stop 		# 关闭shadowsocks
+/etc/init.d/shadowsocks disable 	# 取消开机启动
+
+
+
+=========================
+参考文章：
+http://www.jianshu.com/p/4800eec60516
+https://www.gitbook.io/book/softwaredownload/openwrt-fanqiang
+http://blog.berry10086.com/Tech/Openwrt/openwrt-shadowsocks-ipset/
+
+
+－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+共享：github.com/FollowYourPassion
+邮箱：cooerson1@gmail.com
+微信：cooerson
+
+2014.10.10
+
+
