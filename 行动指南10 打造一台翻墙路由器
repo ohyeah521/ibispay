@@ -89,16 +89,20 @@ supervisorctl restart shadowsocks
 
 
 1.下载安装包 http://sourceforge.net/projects/openwrt-dist/files/shadowsocks-libev/
-	或者 自己在CentOS下编译安装包：
-
-# 使用非root用户编译
-su user
+    或者 自己在CentOS下编译安装包：
 
 # 安装依赖
 yum update
-sudo yum groupinstall 'Development Tools’
+sudo yum group install 'Development Tools’
+
+# 使用非root用户编译
+# 添加一个user用户
+adduser user
+cd /home/user
 
 # 下载openwrt源码并赋予文件夹权限
+# 这个可以查看到cpu型号对应的源码https://downloads.openwrt.org/snapshots/trunk/
+# 这里注意，一定要下载路由器cpu型号对应的源码！下面这行简单用trunk代替
 git clone git://git.openwrt.org/openwrt.git
 sudo chmod -R 777 openwrt
 
@@ -111,6 +115,7 @@ popd
 # 更新feeds
 ./scripts/feeds update -a
 ./scripts/feeds install -a    
+su user
 make defconfig
 
 # 编译要用到的工具和库
@@ -295,8 +300,8 @@ chmod +x /etc/init.d/shadowsocks # 添加执行权限
 
 重启路由器，大功告成！
 
-/etc/init.d/shadowsocks stop 		# 关闭shadowsocks
-/etc/init.d/shadowsocks disable 	# 取消开机启动
+/etc/init.d/shadowsocks stop # 关闭shadowsocks
+/etc/init.d/shadowsocks disable # 取消开机启动
 
 
 
@@ -313,5 +318,4 @@ http://blog.berry10086.com/Tech/Openwrt/openwrt-shadowsocks-ipset/
 微信：cooerson
 
 2014.10.10
-
 
