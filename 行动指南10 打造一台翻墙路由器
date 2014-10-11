@@ -89,7 +89,7 @@ supervisorctl restart shadowsocks
 
 
 1.下载安装包 http://sourceforge.net/projects/openwrt-dist/files/shadowsocks-libev/
-    或者 自己在CentOS下编译安装包：
+或者 自己在CentOS下编译安装包：
 
 # 安装依赖
 yum update
@@ -101,8 +101,7 @@ adduser user
 cd /home/user
 
 # 下载openwrt源码并赋予文件夹权限
-# 这个可以查看到cpu型号对应的源码https://downloads.openwrt.org/snapshots/trunk/
-# 这里注意，一定要下载路由器cpu型号对应的源码！下面这行简单用trunk代替
+# 这里注意，一定要下载路由器cpu型号对应的源码！比如linksys wrt1900ac的cpu类型就不在官方列表中https://downloads.openwrt.org/snapshots/trunk/
 git clone git://git.openwrt.org/openwrt.git
 sudo chmod -R 777 openwrt
 
