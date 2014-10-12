@@ -93,7 +93,7 @@ supervisorctl restart shadowsocks
 
 # 安装依赖
 yum update
-sudo yum group install 'Development Tools’
+sudo yum groupinstall "Development Tools"
 
 # 使用非root用户编译
 # 添加一个user用户
