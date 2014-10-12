@@ -1,101 +1,19 @@
-打造一台翻墙路由器
+打造一台企业级翻墙路由
 
-凡是连上wifi的手机电脑，无需任何设置，都能自动翻墙。
+本文使用神机linksys wrt1900ac，淘宝价格1600左右,可以带100台机器。
 
+1.下载固件，刷系统。
+固件地址：https://github.com/Chadster766/McWRT/releases/download/v1.0.1/openwrt-armadaxp--jffs2-128k.img
 
-=========================
-一：
-首先路由器型号需要在openwrt列表中：http://wiki.openwrt.org/toh/start。(可以ctrl+F搜索匹配型号)
-如果没有可以买一台，能刷openwrt系统的就行。
+2.服务器端安装shadowsocks
 
-淘宝上"华为HG255D"只要45块钱左右就能买到，
-文中用的是"网件NETGEAR 3700v4"，家庭级不到300块，
-如果是小公司可以用神器"思科Linksys WRT1900AC"，淘宝上1700左右，能带100个机器。
+(参考"行动指南10" 或 https://github.com/clowwindy/shadowsocks)
 
--------------------------
-二：
-然后需要一台国外的服务器，可以参考以下几个选择：
+3.由于1900ac的cpu比较稀有，所以需要的ipk安装包都需要自己编译。
+可以直接下载编译好的文件，忽略第3步、跳到第4步。
+下载地址，4个ipk包 https://github.com/cooerson/shadowsocks-libev/releases/tag/v1.4.8
 
-linode.com
-(4分 2000G流量／新机器速度快且稳定，使用10到20G后速度变慢／换机器方便／60元／只支持信用卡）
-
-digitalocean.com
-(4分 1000G流量／速度快但不稳定／换机器方便／30元）
-
-locvps.com
-(3.5分：500G流量／速度快且稳定／机器少，换机器ip不方便／40~60元)
-
-文中所用服务器系统是CentOS。
-
--------------------------
-三：
-服务器端安装shadowsocks
-
-1.CentOS安装shadowsocks
-
-yum install m2crypto python-setuptools
-easy_install pip
-pip install shadowsocks
-
-# 修改配置 vi /etc/shadowsocks.json
-
-{
-    "server":"0.0.0.0",
-    "server_port":7236,
-    "local_address": "127.0.0.1",
-    "local_port":1080,
-    "password":"你的密码",
-    "timeout":300,
-    "method":"rc4-md5",
-    "fast_open": false,
-    "workers": 1
-}
-
-＃保存退出
-
-2.centos后台运行shadowsocks:
-
-# 若未安装supervisor,安装
-yum install python-setuptools
-easy_install supervisor
-
-# 创建默认配置：
-echo_supervisord_conf > /etc/supervisord.conf
-
-vi /etc/supervisord.conf
-# 在默认配置文件后添加：
-[program:shadowsocks]
-command=ssserver -c /etc/shadowsocks.json
-autostart=true
-autorestart=true
-user=nobody
-
-# 在 /etc/default/supervisor 最后加一行
-ulimit -n 51200
-
-# 最后启动就行了：
-supervisord
-
-# 更新重启：
-pip install --upgrade shadowsocks
-supervisorctl restart shadowsocks
-
-(参考 https://github.com/clowwindy/shadowsocks/wiki/%E7%94%A8-Supervisor-%E8%BF%90%E8%A1%8C-Shadowsocks)
-
--------------------------
-四：
-路由器安装ShadowSocks-libev
-具体方案：ShadowSocks-libev + ChinaDNS + iptable
-
-1.下载安装包
-shadowsocks: http://sourceforge.net/projects/openwrt-dist/files/shadowsocks-libev/
-libpolarssl: http://sourceforge.net/projects/openwrt-dist/files/depends-libs/
-chinaDNS: http://sourceforge.net/projects/chinadns/files/dist/
-这里注意，一定要下载路由器cpu型号对应的文件！
-型号列表：https://downloads.openwrt.org/snapshots/trunk/
-比如linksys wrt1900ac的cpu类型就不在官方列表中(wrt1900ac请参考行动指南11).
-
-# 自己在CentOS下编译安装包
+# 下面是自己编译的方法，可以用linode20核的机器，不然编译很慢
 # 安装依赖
 yum update
 sudo yum groupinstall "Development Tools"
@@ -104,13 +22,11 @@ sudo yum groupinstall "Development Tools"
 adduser user
 cd /home/user
 
-# 下载openwrt源码并赋予文件夹权限
-# 注意选择cpu类型对应源码 https://downloads.openwrt.org/snapshots/trunk/
-git clone git://git.openwrt.org/openwrt.git
-sudo chmod -R 777 openwrt
+# 下载wrt1900ac源码
+git clone https://github.com/Chadster766/McWRT.git
 
-# At OpenWRT build root,下载shadowsocks-libev源码
-cd openwrt
+# At build root,下载shadowsocks-libev、polarssl、ChinaDNS源码
+cd McWRT/attitude_adjustment/
 pushd package
 git clone https://github.com/madeye/shadowsocks-libev.git
 git clone https://github.com/clowwindy/ChinaDNS-C.git
@@ -118,7 +34,7 @@ popd
 
 # 更新feeds
 ./scripts/feeds update -a
-./scripts/feeds install -a   
+./scripts/feeds install -a    
 # 编译可能出现以下错误：
 # Build dependency: Please install ncurses. (Missing libncurses.so or ncurses.h)
 # Build dependency: Please install zlib. (Missing libz.so or zlib.h)
@@ -126,7 +42,6 @@ popd
 # 另外需要权限则在／home下赋予文件夹权限 sudo chmod -R 777 user
 su user
 make defconfig
-
 
 # 编译要用到的工具和库(时间略长，20核机器大概半小时)
 su root
@@ -140,36 +55,37 @@ make menuconfig
 make -j V=99 package/shadowsocks-libev/openwrt/compile
 make -j V=99 package/ChinaDNS-C/openwrt/compile
 
-# 文件位置在 openwrt/bin/...
+# 文件位置在/home/user/McWRT/attitude_adjustment/bin/armadaxp/packages
 
 
-2.安装到路由器
-
-# 下载后，上传libpolarssl、ChinaDNS-C、shadowsocks-libev-polarssl 3个ipk包到路由器/tmp 目录
-
-# 安装
+4.# 下载后，上传libpolarssl_1.2.5-1_armadaxp.ipk、ChinaDNS-C_1.1.7_armadaxp.ipk、
+ shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk到路由器/tmp
+# ssh进入路由器192.168.200.1
 cd /tmp
-opkg install shadowsocks-libev-polarssl_1.4.8_ar71xx.ipk 
-opkg install libpolarssl_1.3.8-1_ar71xx.ipk
-opkg install ChinaDNS-C_1.0.0_ar71xx.ipk
+opkg install ChinaDNS-C_1.1.7_armadaxp.ipk
+opkg install libpolarssl_1.2.5-1_armadaxp.ipk
+opkg install shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk
+# 中文包安装后在系统设置中选择即可切换中文
+opkg install luci-i18n-chinese_svn-r10528-1_armadaxp.ipk
 
 # 通过vi /etc/shadowsocks.json打开后，编辑
 
 {
-    "server":"服务器ip",
+    "server”:”服务器地址",
     "server_port":7236,
     "local_port":1080,
-    "password":"你的密码",
+    "password”:”你的密码",  
     "timeout":300,
-    "method":"rc4-md5"
+    "method":"aes-256-cfb"
 }
+
+# 保存退出
 
 # 测试，在浏览器配置类似 SwichySharp 的插件或系统下设置 Socks5 代理测试 ShadowSocks 是否正常运行
 # 浏览器代理地址192.168.1.1，端口1080
 ss-local -c /etc/shadowsocks.json 
 
-
-3.翻墙成功了，但还需要手动设置代理，用ipset配合dnsmasq实现路由器下所有设备自动流量分流。
+5.翻墙成功了，但还需要手动设置代理，用ipset配合dnsmasq实现路由器下所有设备自动流量分流。
 
 # 配置 iptable 前，先检查下自己的 OpenWRT 中是否已经安装iptables-mod-nat-extra，若没有，先安装。
 
@@ -284,13 +200,13 @@ stop() {
 
 # 保存退出
 
-4.启动shadowsocks
+6.启动shadowsocks
 
-/etc/init.d/chinadns start              # 运行chinadns
-/etc/init.d/chinadns enable             # 开机启动
-chmod +x /etc/init.d/shadowsocks        # 添加执行权限
-/etc/init.d/shadowsocks start           # 运行shadowsocks
-/etc/init.d/shadowsocks enable          # 开机启动
+/etc/init.d/chinadns start                	# 运行chinadns
+/etc/init.d/chinadns enable              	# 开机启动
+chmod +x /etc/init.d/shadowsocks 		# 添加执行权限
+/etc/init.d/shadowsocks start    		# 运行shadowsocks
+/etc/init.d/shadowsocks enable   		# 开机启动
 
 
 重启路由器，大功告成！
@@ -299,18 +215,9 @@ chmod +x /etc/init.d/shadowsocks        # 添加执行权限
 /etc/init.d/shadowsocks disable # 取消开机启动
 
 
-
-=========================
-参考文章：
-http://www.jianshu.com/p/4800eec60516
-https://www.gitbook.io/book/softwaredownload/openwrt-fanqiang
-http://blog.berry10086.com/Tech/Openwrt/openwrt-shadowsocks-ipset/
-
-
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 共享：github.com/FollowYourPassion
 邮箱：cooerson1@gmail.com
 微信：cooerson
 
-2014.10.10
-
+2014.10.12
