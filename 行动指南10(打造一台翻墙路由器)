@@ -27,14 +27,14 @@ https://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/nand/openwrt-ar71xx-n
 
 三：然后需要一台国外的服务器，可以参考以下几个选择：
 
-diahosting.com
-(4分：200G流量／速度最稳定／机器少，换机器不方便／70元）
-
 linode.com
 (4分：2000G流量／前10个G速度稳定／换机器方便／60元）
 
 locvps.com
 (4分：500G流量／速度比较稳定／机器少，换机器ip不方便／38元/优惠码：vpser)
+
+diahosting.com
+(4分：200G流量／速度稳定，内存太少，适合连ssh／换机器不方便／70元）
 
 digitalocean.com
 (3.5分：1000G流量／速度不太稳定／换机器方便／30元）
