@@ -157,20 +157,21 @@ make -j V=99 package/ChinaDNS-C/openwrt/compile
 
 2.安装到路由器
 
-
-# 下载后，上传libpolarssl、ChinaDNS-C、shadowsocks-libev-polarssl 3个ipk包到路由器/tmp 目录
+# 用sftp客户端上传libpolarssl、ChinaDNS-C、shadowsocks-libev-polarssl 3个ipk包到路由器/tmp 目录
 # 若未开启sftp，先安装sftp，再上传
+ssh root@192.168.1.1
 opkg update
 opkg install vsftpd openssh-sftp-server
 /etc/init.d/vsftpd enable
 /etc/init.d/vsftpd start
 
+# 安装中文包，然后在网页界面系统设置中切换中文
+opkg install luci-i18n-chinese
+
 cd /tmp
 opkg install shadowsocks-libev-polarssl_1.4.8_ar71xx.ipk 
 opkg install libpolarssl_1.3.8-1_ar71xx.ipk
 opkg install ChinaDNS-C_1.0.0_ar71xx.ipk
-
-# 查看所有安装包，opkg list。libpolarssl可能系统默认已经安装了
 
 # 通过vi /etc/shadowsocks.json打开后，编辑
 
@@ -297,9 +298,9 @@ start() {
 
         /usr/bin/shadowsocks-firewall                                           
 
-}                                                                               
+}                                                                                                                                                   
 
-                                                                                
+
 
 stop() {                                                                        
 
@@ -316,11 +317,11 @@ stop() {
 
 4.启动shadowsocks
 
-/etc/init.d/chinadns start                      # 运行chinadns
-/etc/init.d/chinadns enable                     # 开机启动
-chmod +x /etc/init.d/shadowsocks        # 添加执行权限
-/etc/init.d/shadowsocks start       # 运行shadowsocks
-/etc/init.d/shadowsocks enable          # 开机启动
+/etc/init.d/chinadns start           # 运行chinadns
+/etc/init.d/chinadns enable          # 开机启动
+chmod +x /etc/init.d/shadowsocks     # 添加执行权限
+/etc/init.d/shadowsocks start        # 运行shadowsocks
+/etc/init.d/shadowsocks enable       # 开机启动
 
 
 重启路由器，大功告成！
