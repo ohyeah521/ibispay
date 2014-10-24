@@ -2,14 +2,15 @@
 
 本文使用神机linksys wrt1900ac，淘宝价格1600左右,可以带100台机器。
 
-1.下载固件，web界面刷系统。
-https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/openwrt-armadaxp--jffs2-128k.img
+1.web界面刷系统
+下载固件:https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/openwrt-armadaxp--jffs2-128k.img
+登陆WRT1900AC的本地web界面，点击connectivity，选择Manual firmware update。
+选择固件openwrt-armadaxp--jffs2-128k.img，点击上传
 
-刷机过程中勿断电，自动重启后，
-连接wifi名为MAMBA，密码为belkin123
+刷机过程中勿断电，自动重启后，连接wifi名为MAMBA，密码为belkin123
 登陆192.168.1.200
 设置路由密码，选中Allow remote hosts to connect to local SSH forwarded ports
-设置下wifi密码，刷机成功。
+再设置下wifi密码，刷机成功。
 
 2.服务器端安装shadowsocks
 
