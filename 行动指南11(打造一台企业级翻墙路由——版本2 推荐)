@@ -1,0 +1,229 @@
+打造一台企业级翻墙路由(版本2 推荐)
+
+本文使用神机linksys wrt1900ac，淘宝价格1600左右,可以带100台机器。
+
+1.web界面刷系统
+下载固件:https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/openwrt-armadaxp--jffs2-128k.img
+登陆WRT1900AC的本地web界面，点击connectivity，选择Manual firmware update。
+选择固件openwrt-armadaxp--jffs2-128k.img，点击上传
+
+刷机过程中勿断电，自动重启后，连接wifi名为MAMBA，密码为belkin123
+登陆192.168.1.200
+设置路由密码，选中Allow remote hosts to connect to local SSH forwarded ports
+再设置下wifi密码，刷机成功。
+
+2.服务器端安装shadowsocks
+
+(参考"行动指南10" 或 https://github.com/clowwindy/shadowsocks)
+
+3.由于1900ac的cpu比较稀有，所以需要的ipk安装包都需要自己编译。
+可以直接下载编译好的文件，忽略第3步、跳到第4步。
+ipk包下载地址：https://github.com/cooerson/Mamba
+1. ChinaDNS: 
+https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/ChinaDNS-C_1.1.7_armadaxp.ipk
+2.libpolarssl: 
+https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/libpolarssl_1.3.4-1_armadaxp.ipk
+3.shadowsocks-libev: 
+https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk
+4.luci-i18n-chinese(可选):
+https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/luci-i18n-chinese_0.11.svn10537-1_armadaxp.ipk
+5.luci-theme-bootstrap(可选):
+https://github.com/cooerson/Mamba/releases/download/v3.9-polarssl/luci-theme-bootstrap_0.11.svn10537-1_armadaxp.ipk
+
+修改
+
+# 下面是自己编译的方法，可以用linode20核的机器，不然编译很慢
+# 安装依赖
+yum update
+yum groupinstall "Development Tools”
+yum install ncurses-devel zlib-devel
+
+# 添加一个user用户
+adduser user
+cd /home/user
+
+# 下载wrt1900ac源码
+git clone https://github.com/cooerson/Mamba.git
+
+# 进入 build root
+cd /Mamba/attitude_adjustment
+# 更新feeds
+./scripts/feeds update -a
+./scripts/feeds install -a    
+# 另外需要权限则在／home下赋予文件夹权限 sudo chmod -R 777 user
+su user
+make defconfig
+
+# 编译要用到的工具和库(时间略长，20核机器大概半小时)
+su root
+make prereq && make tools/install && make toolchain/install
+
+make menuconfig
+# 按y选中Target system/Marvell Armada XP
+# 按m选中Luci/Translations/luci-i18n-chinese
+# 按m选中Libraries/SSL/libpolarssl
+# 按m选中Network/ChinaDNS
+# 按m选中Network/shadowsocks-libev-polarssl
+
+# Build the package
+make V=s
+
+# 文件位置在/home/user/Mamba/attitude_adjustment/bin/armadaxp/
+
+
+4.# 下载后，上传libpolarssl_1.3.4-1_armadaxp.ipk、ChinaDNS-C_1.1.7_armadaxp.ipk、shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk、luci-i18n-chinese_0.11+svn10537-1_armadaxp.ipk
+到路由器/tmp
+# ssh进入路由器192.168.200.1
+cd /tmp
+opkg install ChinaDNS-C_1.1.7_armadaxp.ipk
+opkg install libpolarssl_1.3.4-1_armadaxp.ipk
+opkg install shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk
+opkg install luci-i18n-chinese_0.11+svn10537-1_armadaxp.ipk
+# 中文包安装后在web界面系统设置中选择即可切换中文
+
+# 通过vi /etc/shadowsocks.json打开后，编辑
+
+{
+    "server":"服务器ip",
+    "server_port":7236,
+    "local_port":1080,
+    "password":"你的密码",
+    "timeout":300,
+    "method":"rc4-md5"
+}
+
+# 测试，在浏览器配置类似 SwichySharp 的插件或系统下设置 Socks5 代理测试 ShadowSocks 是否正常运行
+# 浏览器代理地址192.168.1.1，端口1080
+ss-local -c /etc/shadowsocks.json 
+
+
+5.翻墙成功了，但还需要手动设置代理，用iptables实现路由器下所有设备自动流量分流。
+
+cd /usr/bin
+touch shadowsocks-firewall
+
+# 通过vi shadowsocks-firewall命令配置文件
+# 将下列内容复制进去：
+
+#!/bin/sh
+
+#create a new chain named SHADOWSOCKS
+iptables -t nat -N SHADOWSOCKS
+
+# Ignore your shadowsocks server's addresses
+# It's very IMPORTANT, just be careful.
+
+iptables -t nat -A SHADOWSOCKS -d 173.230.155.72 -j RETURN
+
+# Ignore LANs IP address
+iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 240.0.0.0/4 -j RETURN
+
+# Ignore Asia IP address
+iptables -t nat -A SHADOWSOCKS -d 1.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 14.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 27.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 36.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 39.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 42.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 49.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 58.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 59.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 60.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 61.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 101.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 103.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 106.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 110.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 111.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 112.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 113.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 114.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 115.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 116.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 117.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 118.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 119.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 120.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 121.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 122.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 123.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 124.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 125.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 126.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 169.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 175.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 180.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 182.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 183.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 202.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 203.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 210.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 211.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 218.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 219.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 220.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 221.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 222.0.0.0/8 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 223.0.0.0/8 -j RETURN
+
+# Anything else should be redirected to shadowsocks's local port
+iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports 1080 
+# Apply the rules
+iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
+
+# 保存退出，chmod +x shadowsocks-firewall给其运行权限。
+# 注意：服务器地址"173.230.155.72"换成自己的服务器地址,local_port:1080
+
+
+# 修改启动配置vi /etc/init.d/shadowsocks
+
+START=95
+
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+CONFIG=/etc/shadowsocks.json
+
+start() {                                                                       
+    service_start /usr/bin/ss-redir -c $CONFIG                              
+    service_start /usr/bin/ss-tunnel -c $CONFIG -l 8964 -L 8.8.8.8:53 -u    
+    /usr/bin/shadowsocks-firewall                                           
+}                                                                                                                                                   
+
+stop() {                                                                        
+    service_stop /usr/bin/ss-redir                                              
+    service_stop /usr/bin/ss-tunnel                                             
+    /etc/init.d/firewall restart                                                
+}
+
+# 保存退出
+
+6.启动shadowsocks
+
+/etc/init.d/chinadns start		# 运行chinadns
+/etc/init.d/chinadns enable		# 开机启动
+chmod +x /etc/init.d/shadowsocks	# 添加执行权限
+/etc/init.d/shadowsocks start	# 运行shadowsocks
+/etc/init.d/shadowsocks enable	# 开机启动
+
+
+重启路由器，大功告成！
+
+/etc/init.d/shadowsocks stop # 关闭shadowsocks
+/etc/init.d/shadowsocks disable # 取消开机启动
+
+
+－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+共享：github.com/FollowYourPassion
+邮箱：cooerson1@gmail.com
+微信：cooerson
+
+2014.10.24
