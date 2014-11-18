@@ -1,44 +1,115 @@
 打造一台企业级翻墙路由
-
+ 
 本文使用神机linksys wrt1900ac，淘宝价格1600左右,可以带100台机器。
 
 1.下载固件，刷系统。
-固件地址：https://github.com/Chadster766/McWRT/releases/download/v1.0.1/openwrt-armadaxp--jffs2-128k.img
+
+固件地址：https://github.com/cooerson/Mamba/releases/tag/v4.8-shadowsocks
+下载固件openwrt-mvebu-mamba-jffs2-128k.img
+登陆WRT1900AC的本地web界面，点击connectivity，选择Manual firmware update，选择固件，点击上传。
+
+刷机过程中勿断电，自动重启后，wifi名为MAMBA，密码为belkin123
+登陆192.168.200.1
+设置路由密码，选中Allow remote hosts to connect to local SSH forwarded ports
+再设置下wifi密码，刷机成功。
 
 2.服务器端安装shadowsocks
 
-(参考"行动指南10" 或 https://github.com/clowwindy/shadowsocks)
+先选择一台国外的服务器，可以参考以下几个选择：
+
+locvps.com
+(4分：500G流量／速度比较稳定／机器少，换机器不方便／38元/优惠码：vpser)
+diahosting.com
+(4分：200G流量／速度稳定，内存小／换机器不方便／70元）
+linode.com
+(4分：2000G流量／每月似乎只有前10个G速度稳定／换机器方便／60元）
+digitalocean.com
+(3.5分：1000G流量／速度不太稳定／换机器方便／30元）
+vultr.com
+(3分：1000G流量／速度不太稳定／机房多，换机器方便／系统问题略多/30元)
+
+文中所用服务器系统是CentOS
+安装shadowsocks方法：
+
+yum install m2crypto python-setuptools
+easy_install pip
+pip install shadowsocks
+
+# 修改配置 vi /etc/shadowsocks.json
+
+{
+    "server":"0.0.0.0",
+    "server_port":7236,
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "password":"你的密码",
+    "timeout":300,
+    "method":"rc4-md5",
+    "fast_open": false,
+    "workers": 1
+}
+
+# 保存退出
+
+# 然后需要在centos后台运行shadowsocks
+# 若未安装supervisor,安装
+yum install python-setuptools
+easy_install supervisor
+
+# 创建默认配置：
+echo_supervisord_conf > /etc/supervisord.conf
+
+vi /etc/supervisord.conf
+# 在默认配置文件后添加：
+[program:shadowsocks]
+command=ssserver -c /etc/shadowsocks.json
+autostart=true
+autorestart=true
+user=nobody
+
+# 最后启动就行了：
+supervisord
+
+# 更新重启：
+pip install --upgrade shadowsocks
+supervisorctl restart shadowsocks
+
+(参考 https://github.com/clowwindy/shadowsocks)
+
 
 3.由于1900ac的cpu比较稀有，所以需要的ipk安装包都需要自己编译。
 可以直接下载编译好的文件，忽略第3步、跳到第4步。
-下载地址，4个ipk包 https://github.com/cooerson/shadowsocks-libev/releases/tag/v1.4.8
+下载ipk包地址：https://github.com/cooerson/Mamba/releases/tag/v4.8-shadowsocks
+ChinaDNS-C_1.1.7_mvebu.ipk
+libpolarssl_1.3.4-1_mvebu.ipk
+shadowsocks-libev-polarssl_1.5.3_mvebu.ipk
+
 
 # 下面是自己编译的方法，可以用linode20核的机器，不然编译很慢
 # 安装依赖
 yum update
-sudo yum groupinstall "Development Tools"
+yum groupinstall "Development Tools"
+yum install ncurses-devel zlib-devel
 
 # 添加一个user用户
 adduser user
 cd /home/user
 
 # 下载wrt1900ac源码
-git clone https://github.com/Chadster766/McWRT.git
+git clone https://github.com/jimmychungbelkin/Mamba.git
 
-# At build root,下载shadowsocks-libev、polarssl、ChinaDNS源码
-cd McWRT/attitude_adjustment/
+# 进入 build root,下载shadowsocks-libev、ChinaDNS源码
+cd Mamba/barrier_breaker/
 pushd package
 git clone https://github.com/madeye/shadowsocks-libev.git
 git clone https://github.com/clowwindy/ChinaDNS-C.git
 popd
 
+# 进入 build root
+cd Mamba/barrier_breaker/
 # 更新feeds
 ./scripts/feeds update -a
 ./scripts/feeds install -a    
-# 编译可能出现以下错误：
-# Build dependency: Please install ncurses. (Missing libncurses.so or ncurses.h)
-# Build dependency: Please install zlib. (Missing libz.so or zlib.h)
-# 则安装：yum install ncurses-devel zlib-devel
 # 另外需要权限则在／home下赋予文件夹权限 sudo chmod -R 777 user
 su user
 make defconfig
@@ -47,26 +118,31 @@ make defconfig
 su root
 make prereq && make tools/install && make toolchain/install
 
-# 按m选中Network/ChinaDNS
-# 按m选中Network/shadowsocks-libev-polarssl
+# 按y或m选择需要的选项，例如
+# Target system/Marvell Armada XP
+# Luci/Translations/luci-i18n-chinese
+# Network/ChinaDNS
+# Network/shadowsocks-libev-polarssl
 make menuconfig
 
-# Build the package
+# Build the package,-j20表示用20核cpu全速编译
+make V=s -j20
+# Build shadowsocks package
 make -j V=99 package/shadowsocks-libev/openwrt/compile
-make -j V=99 package/ChinaDNS-C/openwrt/compile
 
-# 文件位置在/home/user/McWRT/attitude_adjustment/bin/armadaxp/packages
+# 文件位置在/home/user/Mamba/barrier_breaker/bin
 
 
-4.# 下载后，上传libpolarssl_1.2.5-1_armadaxp.ipk、ChinaDNS-C_1.1.7_armadaxp.ipk、
- shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk到路由器/tmp
+4.# 下载后，上传3个ipk到路由器/tmp
+scp ChinaDNS-C_1.1.7_mvebu.ipk root@192.168.200.1:/tmp
+scp libpolarssl_1.3.4-1_mvebu.ipk root@192.168.200.1:/tmp
+scp shadowsocks-libev-polarssl_1.5.3_mvebu.ipk root@192.168.200.1:/tmp
+
 # ssh进入路由器192.168.200.1
 cd /tmp
-opkg install ChinaDNS-C_1.1.7_armadaxp.ipk
-opkg install libpolarssl_1.2.5-1_armadaxp.ipk
-opkg install shadowsocks-libev-polarssl_1.4.8_armadaxp.ipk
-# 中文包安装后在系统设置中选择即可切换中文
-opkg install luci-i18n-chinese_svn-r10528-1_armadaxp.ipk
+opkg install ChinaDNS-C_1.1.7_mvebu.ipk
+opkg install libpolarssl_1.3.4-1_mvebu.ipk
+opkg install shadowsocks-libev-polarssl_1.5.3_mvebu.ipk
 
 # 通过vi /etc/shadowsocks.json打开后，编辑
 
@@ -76,7 +152,7 @@ opkg install luci-i18n-chinese_svn-r10528-1_armadaxp.ipk
     "local_port":1080,
     "password”:”你的密码",  
     "timeout":300,
-    "method":"aes-256-cfb"
+    "method":"rc4-md5"
 }
 
 # 保存退出
@@ -87,12 +163,6 @@ ss-local -c /etc/shadowsocks.json
 
 5.翻墙成功了，但还需要手动设置代理，用ipset配合dnsmasq实现路由器下所有设备自动流量分流。
 
-# 配置 iptable 前，先检查下自己的 OpenWRT 中是否已经安装iptables-mod-nat-extra，若没有，先安装。
-
-opkg update
-opkg install iptables-mod-nat-extra
-
-# 安装后继续
 cd /usr/bin
 touch shadowsocks-firewall
 
@@ -172,9 +242,9 @@ iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports 1080
 # Apply the rules
 iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
 
-# 保存退出，chmod +x shadowsocks-firewall给其运行权限。
 # 注意：服务器地址"173.230.155.72"换成自己的服务器地址,local_port:1080
-
+# 保存退出，添加执行权限
+chmod +x shadowsocks-firewall 
 
 # 修改启动配置vi /etc/init.d/shadowsocks
 
@@ -199,14 +269,14 @@ stop() {
 }
 
 # 保存退出
+chmod +x /etc/init.d/shadowsocks     # 添加执行权限
 
 6.启动shadowsocks
 
-/etc/init.d/chinadns start                	# 运行chinadns
-/etc/init.d/chinadns enable              	# 开机启动
-chmod +x /etc/init.d/shadowsocks 		# 添加执行权限
-/etc/init.d/shadowsocks start    		# 运行shadowsocks
-/etc/init.d/shadowsocks enable   		# 开机启动
+/etc/init.d/chinadns start              # 运行chinadns
+/etc/init.d/chinadns enable             # 开机启动
+/etc/init.d/shadowsocks start           # 运行shadowsocks
+/etc/init.d/shadowsocks enable          # 开机启动
 
 
 重启路由器，大功告成！
@@ -216,8 +286,8 @@ chmod +x /etc/init.d/shadowsocks 		# 添加执行权限
 
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-共享：github.com/FollowYourPassion
+共享：github.com/passiontime
 邮箱：cooerson1@gmail.com
 微信：cooerson
 
-2014.10.12
+2014.11.18
