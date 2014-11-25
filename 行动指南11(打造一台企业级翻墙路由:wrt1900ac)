@@ -13,6 +13,16 @@
 设置路由密码，选中Allow remote hosts to connect to local SSH forwarded ports
 再设置下wifi密码，刷机成功。
 
+修改 opkg配置（web界面－>系统－>软件包－>配置），替换以下路径以获得最新packages
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/base
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/luci
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/packages
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/routing
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/telephony
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/management
+http://downloads.openwrt.org/snapshots/trunk/mvebu/packages/oldpackages
+
+
 2.服务器端安装shadowsocks
 
 先选择一台国外的服务器，可以参考以下几个选择：
@@ -139,6 +149,7 @@ scp libpolarssl_1.3.4-1_mvebu.ipk root@192.168.200.1:/tmp
 scp shadowsocks-libev-polarssl_1.5.3_mvebu.ipk root@192.168.200.1:/tmp
 
 # ssh进入路由器192.168.200.1
+opkg update
 cd /tmp
 opkg install ChinaDNS-C_1.1.7_mvebu.ipk
 opkg install libpolarssl_1.3.4-1_mvebu.ipk
