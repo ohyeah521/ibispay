@@ -17,7 +17,7 @@ mv tar tar.bak
 ln -s /usr/local/Cellar/gnu-tar/1.28/bin/gtar /usr/bin
 
 看起来这样
-执行 ls -l getopt 和 ls -l tar
+执行 ls -l getopt 和 ls -l tar分别得到：
 lrwxr-xr-x  1 root  wheel  45 12 25 12:32 getopt -> /usr/local/Cellar/gnu-getopt/1.1.5/bin/getopt
 lrwxr-xr-x  1 root  wheel  39 12 25 12:46 tar -> /usr/local/Cellar/gnu-tar/1.28/bin/gtar
 这样在下面的依赖测试make defconfig 就没错误了
@@ -64,8 +64,7 @@ make prereq && make tools/install && make toolchain/install
 │   └── shadowsocks.json
 └── usr
     └── bin
-        ├── shadowsocks-firewall
-        └── updatednsmasq
+        └── shadowsocks-firewall
 ＃具体代码
 ＃可以从现有翻墙路由器拷贝配置文件
 mkdir -p files/etc/config
