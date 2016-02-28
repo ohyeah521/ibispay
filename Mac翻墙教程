@@ -1,5 +1,3 @@
-行动指南——写给迷茫的人
-
 Mac翻墙教程
 
 只有翻过墙，才算见过真正的互联网。
@@ -7,16 +5,7 @@ Mac翻墙教程
 
 直切主题，mac下最简单的翻墙方法：
 
-第一步：购买一台国外服务器,可以参考以下几个选择：
-
-linode.com
-(4分 2000G流量／新机器速度快且稳定，使用10到20G后速度变慢／换机器方便／60元／只支持信用卡）
-
-digitalocean.com
-(4分 1000G流量／速度快但不稳定／换机器方便／30元）
-
-locvps.com
-(3.5分：500G流量／速度快且稳定／机器少，换机器ip不方便／40~60元)
+第一步：购买一台国外服务器 推荐linode.com、bandwagonhost.com、digitalocean.com
 
 第二步：在chrome浏览器上安装switchsharp插件
 google插件没法下载的话，可以用百度搜索“switchsharp ”下载后安装（翻墙后就无视百度了）。
@@ -44,8 +33,6 @@ DynamicForward 1080
 
 
 －－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-共享：github.com/FollowYourPassion
-邮箱：cooerson1@gmail.com
-微信：cooerson
+微信：cooerson（暗号：行动指南）
 
 2014.09.16
