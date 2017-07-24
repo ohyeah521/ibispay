@@ -11,6 +11,8 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 - **基于个人技能**、**去中心化发行**、**自助信用**的虚拟货币系统
 - 完全免费，源代码友好开放，任何人都能快速部署和使用
 
+>有鸟币的地方，就有自由——鸟神
+
 ### 核心概念
 
 1. **人的技能才是货币的根本价值**。IOU、黄金、外汇等等货币发行借口有点太浮夸了，还不如用每个人自己的技能呢。  
