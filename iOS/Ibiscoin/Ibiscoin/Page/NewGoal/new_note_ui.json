@@ -1,0 +1,26 @@
+[
+ {
+ "header":"支持编写5000字内的文章～",
+ "cells":[{
+          "title":"",
+          "icon":"icon_new_note_txt",
+          "name":"纯文本编辑器(简单)",
+          "text":"带有基本的快捷插入，\n适合记录Todo、更新日志"
+          },
+          {
+          "title":"",
+          "icon":"icon_new_note_html",
+          "name":"HTML编辑器(中等)",
+          "text":"带有可视化的HTML编辑器，\n比纯文本有更多样式"
+          },
+          {
+          "title":"",
+          "icon":"icon_new_note_md",
+          "name":"Markdown编辑器(高级)",
+          "text":"熟悉Markdown语法可使用！\n能生成简洁优美的排版"
+          }]
+ }
+]
+
+
+

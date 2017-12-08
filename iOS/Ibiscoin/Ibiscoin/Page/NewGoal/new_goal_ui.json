@@ -1,0 +1,30 @@
+[
+ {
+ "header":"鸟币收付款必填",
+ "cells":[{
+          "title":"",
+          "icon":"icon_new_goal_superman",
+          "name":"新建角色",
+          "text":"每个角色都是伟大的，\n你的爱是无上光荣。"
+          },
+          {
+          "title":"",
+          "icon":"icon_new_goal_volunteer",
+          "name":"添加技能",
+          "text":"每个鸟币都对应了某项技能，\n尽情展示热爱的技能吧！"
+          }]
+ },
+ {
+ "header":"获得固定的鸟币月收入",
+ "cells":[
+          {
+          "title":"",
+          "icon":"icon_new_goal_007",
+          "name":"发起行动",
+          "text":"行动可以是任何想做的事情~\n始于热爱，成于行动。"
+          }]
+ }
+]
+
+
+

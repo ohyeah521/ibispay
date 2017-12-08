@@ -1,0 +1,35 @@
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "resizing" : {
+        "mode" : "9-part",
+        "center" : {
+          "mode" : "tile",
+          "width" : 28,
+          "height" : 36
+        },
+        "cap-insets" : {
+          "bottom" : 568,
+          "top" : 532,
+          "right" : 320,
+          "left" : 292
+        }
+      },
+      "idiom" : "universal",
+      "filename" : "lanuchScreen@2x.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}

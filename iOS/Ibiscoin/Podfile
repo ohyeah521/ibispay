@@ -1,0 +1,35 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '9.0'
+
+inhibit_all_warnings!
+
+target 'Ibiscoin' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for Ibiscoin
+  pod 'YYKit'
+  pod 'XLForm'
+  pod 'AFNetworking', '~> 3.0'
+  pod 'KVOController'
+  pod 'libPhoneNumber-iOS'
+  pod 'PINCache'
+  pod 'JGProgressHUD'
+  pod 'MXParallaxHeader'
+  pod 'SAMKeychain'
+  pod 'DateTools'
+  pod 'NSDate-Escort'
+  pod 'DGActivityIndicatorView'
+  pod 'RegExCategories', '~> 1.0'
+  pod 'NSHash', '~> 1.1.0'
+  pod 'JVFloatLabeledTextField'
+  
+  pod 'INSPullToRefresh'
+  pod 'XHLaunchAd'
+  pod 'SimpleAudioPlayer'
+  pod 'TZImagePickerController'
+  pod 'FDFullscreenPopGesture', '1.1'
+  pod 'CYLTabBarController', '1.11.0'
+  pod 'TYPagerController'
+
+end

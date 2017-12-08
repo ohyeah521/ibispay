@@ -1,0 +1,15 @@
+/* 
+  InfoPlist.strings
+  Ibiscoin
+
+  Created by 鸟神 on 2017/6/26.
+  Copyright © 2017年 xingdongpai.com. All rights reserved.
+*/
+
+
+"CFBundleDisplayName" = "鸟币";
+
+"NSCameraUsageDescription" = "需要使用摄像头";
+"NSMicrophoneUsageDescription" = "需要使用麦克风";
+"NSPhotoLibraryUsageDescription" = "需要打开相册";
+"NSLocationWhenInUseUsageDescription" = "需要获取当前位置";
