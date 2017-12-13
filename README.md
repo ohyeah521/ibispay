@@ -13,7 +13,7 @@ We welcome all developers to use our source code to create Ibiscoin applications
 2. Kindly do not use our standard logo (blue bird in a white circle) as your app's logo.  
 3. Please remember to publish your code too in order to comply with the licences.  
 
-## 鸟币——虚拟技能货币  
+## 鸟币——技能货币  
 
 借助移动互联网+开源技能货币，人类终于能够在世界任何角落，点燃无法扑灭的自由之火。
 
@@ -37,9 +37,7 @@ We welcome all developers to use our source code to create Ibiscoin applications
 - 我们相信**爱和信任是一种选择**！我们创造了我们自己的现实。
 
 ### 目标
-- 终极共享经济平台
-- 自给自足的食物链
-- 有鸟币的地方，就有自由
+- 有鸟币的地方，就有爱和自由
 
 ### 选择
 **“以前没得选，现在可以选了！”**  
@@ -51,13 +49,6 @@ We welcome all developers to use our source code to create Ibiscoin applications
 **奴隶总是想当奴隶主——这就是根深地固的奴性**。奴隶相信生活本来就是你争我夺，而制造你争我夺，恰恰是奴隶主每天的工作。停止自我奴役、跳出互相奴役的思维，自由就近了。
 
 ## 鸟币iOS版 
-- **行动发起人**特别适用！
-- **找朋友帮忙**特别适用！
-- 线上 **内容付费**适用！
-- 线下商户 **熟客适用**！
-- 发红包适用！**搭讪适用**！
-- 公司、社群、家庭等都适用！
-
 
 ![](http://niaobi.org/Screen/Launch640.png)  
 
@@ -70,11 +61,11 @@ We welcome all developers to use our source code to create Ibiscoin applications
 
 ## 设计思路  
 
-1. 程序本身没有逻辑伤，做到只需要最小可信点，去除所有中介性质的逻辑定义  
-2. 信任和爱是一种主观的选择
+1. 程序做到只需要最小可信点，去除所有中介性质的逻辑定义  
+2. 信任和爱是一种主观的选择，也是一种智慧
 3. 对强制型货币的补充和平衡
 
->鸟币系统并不需要区块链技术，鸟币拥有一套更为智慧的完整的逻辑系统。并且我们认为**程序内部**并不能解决所有问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了～  
+>**程序内部**并不能解决所有问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了～  
 >我们真正需要的，不是像比特币那样试图在程序内部**完全去除怀疑**，而是选择建立一个**最小化的信任点的程序**——这才是鸟币的思路！  
 >对于鸟币系统来说，你只需要相信你正在使用的鸟币实例部署者一个人，就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。  
 
