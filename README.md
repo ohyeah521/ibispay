@@ -50,8 +50,6 @@ We welcome all developers to use our source code to create Ibiscoin applications
 
 ## 鸟币iOS版 
 
-![](http://niaobi.org/Screen/Launch640.png)  
-
 ![](http://niaobi.org/Screen/NewHome.PNG)  
 
 ![](http://niaobi.org/Screen/Role.png)  
