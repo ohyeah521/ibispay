@@ -3,7 +3,6 @@
 
 >"最终，人们会谈论起这场因迷信'空无'而生的自我奴役"  
 >"今天，让爱念实现！"  
->"自由之火已经点燃“
 
 每个激动人心的故事，都有对应的坑~  
 以下是背景：  
@@ -17,7 +16,7 @@
 - 只要有互联网的地方，就能用鸟币建立自由的生态链
 - 源代码友好开放，任何人都可以部署自己的鸟币服务
 
-###官方iOS应用 [https://niaobi.net](https://niaobi.net)   
+### 官方iOS应用 [https://niaobi.net](https://niaobi.net)   
 
 ### 核心概念
 
@@ -37,24 +36,19 @@
 
 >能满足贪欲的 却先创造了空虚    
 能保障安全的 却先创造了恐惧   
-那些颠倒的念头引发的噩梦  
-相信你也多少有所体验
+告别颠倒的念头引发的噩梦吧！  
+“以前没得选，现在可以选了！”  
 
-**“以前没得选，现在可以选了！”**  
-地球上有两百多个国家，有五颜六色的肤色，有各种各样的信仰，有五花八门的政体。但其实世界已经“大同”了——中央银行系统都"长的"一模一样！面对这只真正的无形黑手，**对于想要一点点拿回自己生活的主动权的人**，就推荐使用鸟币啦。
+地球上有两百多个国家，有五颜六色的肤色，有各种各样的信仰，有五花八门的政体。但其实世界已经“大同”了——中央银行系统都"长的"一模一样！面对无形的黑手，**对于想要一点点拿回自己生活的主动权的人**，就推荐使用鸟币啦！当然，长夜的黑暗，恰恰衬托出了星空的美，是剧情不可缺少的一部分~
 
 ### 起源
-经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，就是“一手交钱一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的！这就逗比了。。哈哈
-
-**奴隶总是想当奴隶主——这就是根深地固的奴性**。奴隶相信生活本来就是你争我夺，而制造你争我夺，恰恰是奴隶主每天的工作。停止自我奴役、跳出互相奴役的思维，自由本来就已经有了，别用这些念头把它毁了就行了~
+经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，也就是“一手交钱 一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的！这就逗比了。。哈哈。所以本质上庞大的人为监管机构就是泡沫幻影、安慰剂罢了。你想要的保护，已经在你自己手中。鸟币的自助信用功能，会让你茅塞顿开。自由本来就已经有了，别用念头把它毁了就行了~
 
 ## 鸟币iOS版 
 
 ![](http://niaobi.org/Screen/NewHome.PNG)  
 
-![](http://niaobi.org/Screen/Role.png)  
-
-截图文件夹传送： [ScreenShot](https://github.com/ibiscoin/ibiscoin/blob/master/Screen)
+截图文件夹： [ScreenShot](https://github.com/ibiscoin/ibiscoin/blob/master/Screen)
  
 
 ## 设计思路  
@@ -84,27 +78,21 @@ todo：一键部署
 ## 收款码贴纸
 默认提供了十几种鸟币收款码贴纸，**欢迎大家借鉴已有的小鸟形象**制作自己喜爱的鸟币贴纸和向官方投稿。  
 
-![](http://niaobi.org/Tmpl_QRCode/sample1.png)   
 ![](http://niaobi.org/Tmpl_QRCode/sample2.png)   
 
 贴纸文件夹传送： [QRCode](https://github.com/ibiscoin/ibiscoin/blob/master/Tmpl_QRCode)
 
-## 我们的信念
 
-[我们的信念](http://niaobi.org/Intro/OurFaith.jpg)
+## 鸟神号海盗船
 
-## 联合创始人
-
-[联合创始人](http://niaobi.org/Image/FOUNDER.PNG)    
-  
+[发起人们](http://niaobi.org/Image/FOUNDER.PNG)    
+[信念](http://niaobi.org/Intro/OurFaith.jpg)  
 
 ## 相关信息
 
-#### 1.鸟币白皮书：[niaobi.win](http://niaobi.win)
-#### 1.鸟币黄皮书（过时版本，待整理）：[niaobi.win-yellow-paper](http://niaobi.win)
-
-## 有一腔热血？请联系鸟神
-微信：cooerson1  
+1. 鸟币白皮书：[niaobi.win](http://niaobi.win)
+2. 鸟币黄皮书(过时的)：[niaobi.win-yellow-paper](http://niaobi.win)
+3. 鸟神：t.me cooerson  
 
 ## Ibiscoin - Next generation skillcurrency network
 
