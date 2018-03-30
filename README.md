@@ -1,27 +1,23 @@
 
-# ibis-ios
+# IBISCOIN
 
-## Ibiscoin - Next generation skillcurrency network
+>"最终，人们会谈论起这场因迷信'空无'而生的自我奴役"  
+>"今天，让爱念实现！"  
+>"自由之火已经点燃“
 
-Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run Ibiscoin and participate in the skillcurrency network seamlessly.
+每个激动人心的故事，都有对应的坑~  
+以下是背景：  
 
+1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)     
+2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)
 
-### Creating your Ibiscoin Application
-We welcome all developers to use our source code to create Ibiscoin applications. There are several things we require from all developers for the moment.
+## 鸟币(NB、ibiscoin)——开源技能货币 
 
-1. Please do not use the name Ibiscoin for your app — or make sure your users understand that it is unofficial.  
-2. Kindly do not use our standard logo (blue bird in a white circle) as your app's logo.  
-3. Please remember to publish your code too in order to comply with the licences.  
+- **基于技能白条**、**自助信用**的开源货币系统
+- 只要有互联网的地方，就能用鸟币建立自由的生态链
+- 源代码友好开放，任何人都可以部署自己的鸟币服务
 
-## 鸟币——技能货币  
-
-借助移动互联网+开源技能货币，人类终于能够在世界任何角落，点燃无法扑灭的自由之火。
-
-- **基于个人技能**、**去中心化发行**、**自助信用**的虚拟货币系统
-- 不受政党体制和中央集权影响，只要有互联网的地方，就能用鸟币建立自由的生态链
-- 完全免费，源代码友好开放，任何人都能使用鸟币，任何人都可以部署自己的鸟币服务
-
-iOS应用（开发中，请保持关注 [https://niaobi.net](https://niaobi.net) ）  
+###官方iOS应用 [https://niaobi.net](https://niaobi.net)   
 
 ### 核心概念
 
@@ -34,9 +30,8 @@ iOS应用（开发中，请保持关注 [https://niaobi.net](https://niaobi.net)
 
 ### 信念
 
-- 我们相信**人人生来富有**！技能已经在每个人手中，中介这种东西，用开源代码代替就好了。
-- 我们相信**技能可以直接当钱花**！而不需要先用技能换了钱(上班)—再用钱去买技能(消费)～～～
-- 我们相信**爱和信任是一种选择**！我们创造了我们自己的现实。
+- 我们相信**人人生来富有**！技能已经在每个人手中，技能就是钱！**技能可以直接花**！只工作，不上班！  
+- 我们相信**开源和自助信用**！中介将永远存在，而开源程序是绝对比人靠谱的第三方信用中介。
 
 ### 机遇
 
@@ -73,11 +68,15 @@ iOS应用（开发中，请保持关注 [https://niaobi.net](https://niaobi.net)
 >对于鸟币系统来说，你只需要相信你正在使用的鸟币实例部署者一个人，就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。  
 
 ## 快速部署
+
 欢迎所有开发者部署此项目为大家提供鸟币服务。目前有几点需要注意：
 
 1. 请让用户知道是非官方出品的鸟币应用
 2. 请稍微修改官方Logo（蓝色的小鸟在一朵云中间的那个）
 3. 请按照开源协议公开你的代码
+ 
+ 
+todo：一键部署
  
 具体部署请配合后台（文档正在迁移和持续完善中）：  
 后台传送：[ibiscoin](https://github.com/ibiscoin/ibiscoin)
@@ -97,11 +96,7 @@ iOS应用（开发中，请保持关注 [https://niaobi.net](https://niaobi.net)
 ## 联合创始人
 
 [联合创始人](http://niaobi.org/Image/FOUNDER.PNG)    
-
-
-## 兔子洞
-#### 1.[货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)  
-#### 2.[如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)  
+  
 
 ## 相关信息
 
@@ -110,4 +105,16 @@ iOS应用（开发中，请保持关注 [https://niaobi.net](https://niaobi.net)
 
 ## 有一腔热血？请联系鸟神
 微信：cooerson1  
+
+## Ibiscoin - Next generation skillcurrency network
+
+Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run Ibiscoin and participate in the skillcurrency network seamlessly.
+
+
+### Creating your Ibiscoin Application
+We welcome all developers to use our source code to create Ibiscoin applications. There are several things we require from all developers for the moment.
+
+1. Please do not use the name Ibiscoin for your app — or make sure your users understand that it is unofficial.  
+2. Kindly do not use our standard logo (blue bird in a white circle) as your app's logo.  
+3. Please remember to publish your code too in order to comply with the licences.  
 
