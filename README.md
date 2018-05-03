@@ -1,16 +1,15 @@
 
-# 鸟币NB IBISCOIN
+# 鸟币（NB、IBISCOIN）——开源技能货币 
+## Ibiscoin - Next generation skillcurrency network
 
-
-## ——开源技能货币 
+Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run Ibiscoin and participate in the skillcurrency network seamlessly.
 
 - 基于**技能白条**、**自助信用**的虚拟货币系统
 - 只要有网的地方，就能用鸟币建立自由交易链
 - 源代码友好开放，任何人都可以部署鸟币服务
 
-### 官方iOS应用 [https://niaobi.net](https://niaobi.net)   
+### 官方APP [https://niaobi.net](https://niaobi.net)   
 
->“最终，人们会谈论起这场因迷信’空无’而生的持续上千年自我奴役”
 
 ### 核心概念
 
@@ -18,7 +17,7 @@
 
 
 1. **人的技能才是货币的根本价值**。人的技能才是交易中最根本的价值，而不是负债、黄金和外汇。
-2. **彻底的去中心化货币发行系统**。人人都能发行自己的货币——鸟币！自己的鸟币的价值，取决于别人对自己技能的认可，就这么简单。
+2. **彻底的去中介的货币发行系统**。人人都能发行自己的货币——鸟币！自己的鸟币的价值，取决于别人对自己技能的认可，就这么简单。
 3. **开源的自助信用程序比人靠谱**。单方面信用 ≠ 互相信任！！印钱的人也是放贷的人也是掌权的人也是制定法规的人，这种情况下，互相信任是一种幻想。所以鸟币使用自助信用系统（公开算法的信用计算程序）就解决了这个问题。   
 
 ### 信念
@@ -33,14 +32,14 @@
 ### 背景：
 经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，也就是“一手交钱 一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的。  
 
-1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)     
-2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)
+1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)（推荐）     
+2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)（推荐）
  
 
 ## 设计思路  
 
 >**程序内部**并不能解决所有问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了～  
->我们真正需要的，不是像比特币那样试图在**程序内部**去除怀疑，而是选择建立一个**最小化的信任点的程序**——这才是鸟币的思路！  
+>我们真正需要的，不是像比特币那样试图在**程序内部**去除怀疑，而是选择建立一个**最小化的信任点的程序**——这才是鸟币对于交易的思路抽象！  
 >对于鸟币系统来说，你只需要相信你正在使用的鸟币实例部署者一个人（对于任意一个货币系统，并不存在完全无信任的模式，总要相信点什么），就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。    
 >信任和爱是一种主观的选择，如果你选择创造负能量，那也是被"爱"允许的，这就是爱的智慧
 
@@ -58,20 +57,7 @@
 ## 相关信息
 
 1. 鸟币白皮书：[niaobi.win](http://niaobi.win)
-2. 鸟币黄皮书(过时的)：[niaobi.win-yellow-paper](http://niaobi.win)
-3. telegram：[cooerson](https://t.me/cooerson)  
-4. [发起人们](http://niaobi.org/Image/FOUNDER.PNG)
+2. 鸟币黄皮书(过时待更)：[niaobi.win-yellow-paper](http://niaobi.win)
+3. telegram：[cooerson](https://t.me/cooerson)   微信：cooerosn1  
+4. [发起人](http://niaobi.org/Image/FOUNDER.PNG)
 5. [信念](http://niaobi.org/Intro/OurFaith.jpg)  
-
-## Ibiscoin - Next generation skillcurrency network
-
-Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run Ibiscoin and participate in the skillcurrency network seamlessly.
-
-
-### Creating your Ibiscoin Application
-We welcome all developers to use our source code to create Ibiscoin applications. There are several things we require from all developers for the moment.
-
-1. Please do not use the name Ibiscoin for your app — or make sure your users understand that it is unofficial.  
-2. Kindly do not use our standard logo (blue bird in a white circle) as your app's logo.  
-3. Please remember to publish your code too in order to comply with the licences.  
-
