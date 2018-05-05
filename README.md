@@ -97,8 +97,11 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 	“程序内部”并不能解决所有信用问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了。
 	对于鸟币系统来说，建立一个最小化的信任点的程序就是鸟币的做到的极致，只需要相信正在使用的鸟币实例部署者一个人，就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。    
 
+### 技能版本和鸟币版本关系
 
-### 相关信息
+![](http://ww1.sinaimg.cn/large/5d92cda0ly1fr0dkuej8fj21qk0u0jyc.jpg)
+
+### more
 
 1. 鸟币白皮书(过时待更)：[niaobi.win](http://niaobi.win)
 2. 鸟币黄皮书(过时待更)：[niaobi.win-yellow-paper](http://niaobi.win)
