@@ -1,9 +1,0 @@
-CONFIGURATION_BUILD_DIR = $PODS_CONFIGURATION_BUILD_DIR/RegExCategories
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/RegExCategories" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/CYLTabBarController" "${PODS_ROOT}/Headers/Public/DGActivityIndicatorView" "${PODS_ROOT}/Headers/Public/DateTools" "${PODS_ROOT}/Headers/Public/FDFullscreenPopGesture" "${PODS_ROOT}/Headers/Public/INSPullToRefresh" "${PODS_ROOT}/Headers/Public/JGProgressHUD" "${PODS_ROOT}/Headers/Public/JVFloatLabeledTextField" "${PODS_ROOT}/Headers/Public/KVOController" "${PODS_ROOT}/Headers/Public/MXParallaxHeader" "${PODS_ROOT}/Headers/Public/NSDate-Escort" "${PODS_ROOT}/Headers/Public/NSHash" "${PODS_ROOT}/Headers/Public/PINCache" "${PODS_ROOT}/Headers/Public/RegExCategories" "${PODS_ROOT}/Headers/Public/SAMKeychain" "${PODS_ROOT}/Headers/Public/SimpleAudioPlayer" "${PODS_ROOT}/Headers/Public/TYPagerController" "${PODS_ROOT}/Headers/Public/TZImagePickerController" "${PODS_ROOT}/Headers/Public/XHLaunchAd" "${PODS_ROOT}/Headers/Public/XLForm" "${PODS_ROOT}/Headers/Public/YYKit" "${PODS_ROOT}/Headers/Public/libPhoneNumber-iOS"
-PODS_BUILD_DIR = $BUILD_DIR
-PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
-PODS_ROOT = ${SRCROOT}
-PODS_TARGET_SRCROOT = ${PODS_ROOT}/RegExCategories
-PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}
-SKIP_INSTALL = YES

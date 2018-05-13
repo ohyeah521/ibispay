@@ -1,8 +1,8 @@
 
-# 鸟币（NB、IBISCOIN）——开源技能货币 
-## Ibiscoin - Next generation skillcurrency network
+# 鸟币（货币符号：NB）——开源技能货币 
+## Ibiscoin(symbol:NB) -  A skill-based currency network
 
-Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run Ibiscoin and participate in the skillcurrency network seamlessly.
+Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run ibiscoin and participate in the skill-based currency network seamlessly.
 
 - 基于**技能白条**、**自助信用**的虚拟货币系统
 - 只要有网的地方，就能用鸟币建立自由交易链
@@ -17,15 +17,17 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 
 
 1. **人的技能才是货币的根本价值**。人的技能才是交易中最根本的价值，而不是负债、黄金和外汇。
-2. **彻底的去中介的货币发行系统**。人人都能发行自己的货币——鸟币！自己的鸟币的价值，取决于别人对自己技能的认可，就这么简单。
-3. **开源的自助信用程序比人靠谱**。单方面信用 ≠ 互相信任！！印钱的人也是放贷的人也是掌权的人也是制定法规的人，这种情况下，互相信任是一种幻想。所以鸟币使用自助信用系统（公开算法的信用计算程序）就解决了这个问题。   
+
+2. **开源的自助信用程序比人靠谱**。单方面信用 ≠ 互相信任！！印钱的人也是放贷的人也是掌权的人也是制定法规的人，这种情况下，互相信任是一种幻想。所以鸟币使用自助信用系统（公开算法的信用计算程序）就解决了这个问题。   
+
+3. **彻底的去中介的货币发行系统**。人人都能发行自己的货币——鸟币！自己的鸟币的价值，取决于别人对自己技能的认可，就这么简单。
 
 ### 信念
 
 - 我们相信**人人生来富有**！因为技能已经在每个人手中。**技能就是钱！技能可以直接花**！只工作，不上班！  
 - 我们相信**开源和自助信用**！中介是永远存在的，而开源程序是第三方信用中介的终极形态。
 
-### 机遇
+### 目标
 
 地球上有两百多个国家，有五颜六色的肤色，有各种各样的信仰，有五花八门的政体。但其实世界已经“大同”了——中央银行系统都"长的"一模一样！国家货币，能满足贪欲却先创造了空虚、能保障安全的却先植入了恐惧。**对于想要一点点拿回自己生活的主动权的人**，请开始关注鸟币！**每个人都想摆脱被收割的命运，以前没得选，现在可以选了！今天，让爱念实现。**
 
@@ -35,32 +37,28 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)（推荐）     
 2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)（推荐）
  
-## 部分算法规则，详情请阅读代码
-### 鸟币转账精分：  
-
+## 部分定义，实现见代码
+鸟币转账精分：
+	
 	a1发行 a2转手  
 	b1普通鸟币 b2超级鸟币  
-	c1支付(付费) c2出售(收费) c3赠送(免费)  
+	c1支付(付费、买) c2出售(收费、卖) c3赠送(免费)  
 	d1一人/次 d2多人/次  
 	e1已知对象 e2未知对象  
-	f1担保交易 f2博弈交易  
+	f1担保交易 f2博弈交易
 
-	博弈（未来） 可能得到资产、可能达成的目标  
-	交易（当下） 达成合约、兑现承诺  
-	担保（过去） 已经有的信用资产、技能资产、实物资产、人民币资金等  
+	博弈（当下的未来价值） 可能得到资产、可能达成的目标  
+	交易（当下价值） 达成合约、兑现承诺  
+	担保（当下的过去价值） 已经有的信用资产、技能资产、实物资产、人民币资金等  
 
 App中的名词定义：  
 
-	一键发币 = a1 +b1|b2 +c1|c2|c3  +d1 +e1 +f1  ——①技能合约  ——②剧情合约 ——③鸟币红包    
-	一键ICO = a1 +b1    +c2|c3     +d2 +e2 +f2|(f1&f2)  ——③投资合约(有风险)  ——④对赌合约（能保底的投资）  
+	一键发币    = a1  +b1|b2 +c1|c2|c3  +d1     +e1     +f1          ——①技能合约  ——②剧情合约 ——③鸟币红包      
+	一键ICO    = a1  +b1    +c2|c3     +d2     +e2     +f2|(f1&f2)  ——④投资合约(有风险)  ——⑤对赌合约（能保底的投资）    
 	
-	交易大厅：
-	鸟币转手 = 转手① 注：1.转手普通鸟币需要对方已经注册，发行则不必。2.适用于>=3星的普通鸟币
-	ico转手 = 转手③
-	有担保的ico转手 = 转手④
-
-	私下转赠
-	超级鸟币转手1.超级鸟币一次交易一个 2.不支持买卖（包括出售、转卖和提现）
+	鸟币转手    = a2  +b1    +c1|c2|c3  +d1     +e1|e2  +f1          ——⑥转卖①|③  ——⑦赠送①|③  注：1.转手普通鸟币需要对方已经注册，发行则不必。2.适用于>=3星的普通鸟币  
+	ICO转手    = a2  +b1    +c1|c2|c3  +d1     +e1|e2  +f2		  ——⑧转卖④|⑤  ——⑨赠送④|⑤  
+	转赠超级鸟币 = a2  +b2    +c3        +d1     +e1     +f1          ——⑩赠送② 注：1.超级鸟币一次交易一个 2.不支持买卖（包括出售、转卖和提现）  
 
 4种接收方式  
 
@@ -138,10 +136,8 @@ App中的名词定义：
 
 1. 鸟币白皮书(过时待更)：[niaobi.win](http://niaobi.win)
 2. 鸟币黄皮书(过时待更)：[niaobi.win-yellow-paper](http://niaobi.win)
-4. 鸟神微信：cooerosn1  
-5. telegram：[cooerson](https://t.me/cooerson)  
-4. [发起人](http://niaobi.org/Image/FOUNDER.PNG)
-5. [信念](http://niaobi.org/Intro/OurFaith.jpg)  
+3. 鸟神微信：cooerosn1  
+4. telegram：[cooerson](https://t.me/cooerson)  
 
 
 ## 部署引导（development）
@@ -250,5 +246,9 @@ mongodb://youruser:yourpassword@localhost/yourdatabase
 /apple-touch-icon.png   
  
  
+todo..
+ 
 ## 一键快速部署（service提供者）
-等待更新
+
+
+todo..
