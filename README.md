@@ -135,7 +135,7 @@ App中的名词定义和10种转账类型：
 
 ### 技能版本和鸟币版本关系
 
-![](http://ww1.sinaimg.cn/large/5d92cda0ly1fr0dkuej8fj21qk0u0jyc.jpg)
+![](http://ww1.sinaimg.cn/large/5d92cda0ly1frd011vvl3j21r20zsngy.jpg)
 
 ### more
 
