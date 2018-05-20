@@ -1,6 +1,6 @@
 
-# 鸟币（货币符号：NB）——开源技能货币 
-## Ibiscoin(symbol:NB) -  A skill-based currency network
+# 鸟币(NB)——开源技能货币 
+## Ibiscoin(IIC) -  A skill-based currency network
 
 Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run ibiscoin and participate in the skill-based currency network seamlessly.
 
@@ -39,7 +39,6 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 - 鸟币缩写：NB、鸟币符号：Φ
 - 超级鸟币缩写：CNB、超级鸟币符号：✪
 - 每个人发行的鸟币都可以有不同且唯一的缩写
-
 
 鸟币转账精分：
 	
