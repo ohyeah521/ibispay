@@ -34,12 +34,14 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)（推荐）
  
 ## 部分定义，实现见代码
-符号和缩写：
+符号和缩写定义：
 
-- 鸟币缩写：NB、鸟币符号：Φ
-- 超级鸟币缩写：CNB、超级鸟币符号：✪
-- 每个人发行的鸟币都可以有不同且唯一的缩写
-
+	鸟币缩写：NB
+	超级鸟币缩写：CNB
+	每个人发行的鸟币都可以有不同且唯一的缩写，例如某用户发行了鸟神币(缩写S):
+		鸟神币(S)完整缩写为：S·NB
+		超级鸟神币(S)完整缩写为：S·CNB
+	
 鸟币转账精分：
 	
 	a1发行 a2转手  
