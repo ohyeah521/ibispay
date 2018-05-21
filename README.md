@@ -2,6 +2,7 @@
 # 鸟币(NB)——开源技能货币 
 ## Ibiscoin -  A skill-based currency network
 
+
 Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run ibiscoin and participate in the skill-based currency network seamlessly.
 
 - 基于**技能白条**、**自助信用**的虚拟货币系统
@@ -141,6 +142,12 @@ App中的名词定义和10种转账类型：
 ### 技能版本和鸟币版本关系
 
 ![](http://ww1.sinaimg.cn/large/5d92cda0ly1freh0wlnujj21qx0ze1ds.jpg)
+
+### 区块链
+首先鸟币的设计是完全**不迷信**区块链的，其次比特币在发行方式、信用体系、去中心化等方面具有先天缺陷，更适合作为附属于国家货币的暗中交易和洗钱工具，而非独立的货币系统，被认定为虚拟商品是很准确的。  
+1. 鸟币并不追求绝对的安全交易，而是提供公开透明的自助信用算法，因为我们认为：危险可以是充满乐趣的冒险！世界上并不存在绝对的安全！  
+2. 鸟币并不追求绝对永久的东西，鸟币选择相信的时间的观点是：当下是比时间更加真实的物理抽象。准确来讲，并没有真正的过去和未来，只有当下的过去和当下的未来，所以每一瞬间都可以有不同的未来和过去，所以只有当下才是真实的。区块链所谓的永久的、永远不可篡改的记录，都是镜花水月。  
+3. 鸟币并不贪恋空无的念头。货币超发、通货膨胀、货币干预等问题，是在现有中央银行体系的逻辑下产生的问题，而比特币情怀虽好，但在使用挖矿模拟现实的设定，显得对交易中的价值认知的智商不足。很重要的一点，我们认为，技能就是钱，换句话说每个人都**已经有钱**了！生来富有！
 
 ### more
 
