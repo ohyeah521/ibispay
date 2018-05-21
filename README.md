@@ -1,6 +1,6 @@
 
 # 鸟币(NB)——开源技能货币 
-## Ibiscoin(IIC) -  A skill-based currency network
+## Ibiscoin -  A skill-based currency network
 
 Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run ibiscoin and participate in the skill-based currency network seamlessly.
 
