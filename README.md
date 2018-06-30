@@ -1,5 +1,4 @@
 # 鸟币——开源技能货币 
-## Ibiscoin -  A fucking smart currency network
 
 # 核心愿景
 
