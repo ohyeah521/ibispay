@@ -1,49 +1,63 @@
+# 鸟币——开源技能货币 
+## Ibiscoin -  A fucking smart currency network
 
-# 鸟币(NB)——开源技能货币 
-## Ibiscoin -  A skill-based currency network
+# 核心愿景
+
+地球生活的日常，最大的问题，在于人们被看似有限的能量自我奴役了。  
+当能量有限的时候，空无的念头就产生了。继而生了贪欲、愤怒和恐惧，以及恶念反复循环创造的现实。  
+一些不凡之人已经意识到了，只有跳出线性的小我思维，开启自身天赋，才能被爱的泡泡包裹着，得到源源不断的能量。    
+
+>爱已存在于此时此地，若连接高我，则被爱包裹——造梦真经  
+
+同理，对于一个经济体和货币系统，"天赋拼图"是其持久存活的**源动力**。  
+在鸟币世界里，允许每个人都能成为自己、去做最想做的事情、沉浸在热爱之中，任何一个角色，都是动态的天赋拼图中完美融洽的一块。而交易呢，是自动发生的！哈哈哈哈！并不需要刻意掌控。
+>成为自己，天赋开启，  
+阴爱二分，自动回魂，  
+五行在手，潜龙我有，  
+潜龙勿用，按需同步。  
+——造梦真经
+
+你也许已经体验过了被重重限制的生活，比如医生为了赚钱，可能故意让你有病；比如餐馆为了赚钱，可能让你吃毒等等。  
+所以只有真正把外部能量来源搞定，才能解决货币系统的根本问题。而在系统内部搞再多幺蛾子——如区块链，对系统整体来说是徒劳的。  
+没错，鸟币的第一个核心点：就是**造大爱**。有大爱时，逐小利就成了乐趣。  
 
 
-Ibiscoin is a open-source, skill-based currency network. A decentralized solution to current currency system, it avoids the risks of a single bank monopolizing your world. Anyone can run ibiscoin and participate in the skill-based currency network seamlessly.
+第二个核心点，就是重定义一个信念，**你已经有钱了！**技能就是钱，钱就是技能！  
+富足的生活源自于富足的念头，所以当用户使用鸟币的同时，就已经在重定义钱的概念。  
+"没钱"这种空无的念头，就像一根细绳牢牢拴住了大象，可以趁早忘掉它了。
 
-- 基于**技能白条**、**自助信用**的虚拟货币系统
-- 只要有网的地方，就能用鸟币建立自由交易链
-- 源代码友好开放，任何人都可以部署鸟币服务
 
-### 官方APP [https://niaobi.net](https://niaobi.net)   
+#### 心中有爱，脑中富足，美梦得以生根发芽。
 
-### 核心概念
+# 极简设计
+1. 每个人都是一个央行（一个国家的中央银行）  
+2. 每个人都可以发行自己的货币（不同名称的鸟币）  
+3. 每种鸟币的价值都是来源于天赋和技能
+4. 理论可以发行无限个鸟币（实际取决于技能被需要的程度）
+5. 定价始终可以转化成能理解的货币定价  
+6. 发行和回收组成一个完整的交易，拒绝回收时影响自助信用
+7. 更棒的是，你还可以选择建立属于你自己的鸟币服务
 
-#### 技能（指自身天赋和任何对他人有用的东西）是鸟币所信仰的交易根本价值。
-- **技能就是钱，钱就是技能！技能可以直接当钱花**！  
+于是，这样的一份开源代码就能生生不息地为人类的经济自由服务了！！！基于**技能白条**、**自助信用**的技能货币系统，只要有网的地方，就能用鸟币建立自由交易。
 
-- **人的技能才是货币的根本价值**！而非负债、黄金和外汇。
+运行中的例子：**官方鸟币APP** [https://niaobi.net](https://niaobi.net)  
 
-- **开源的自助信用程序比人靠谱**。单方面信用 ≠ 互相信任！！印钱的人也是放贷的人也是掌权的人也是制定法规的人，这种情况下，互相信任是一种幻想。所以鸟币使用自助信用系统（公开算法的信用计算程序）就解决了这个问题。   
 
-- **彻底去中介的货币发行系统**。人人都能发行自己的虚拟货币——鸟币！自己鸟币的技能价值，取决于别人对自己技能的认可。
 
-- **开源的自助信用**是货币中介的终极形态！并且中介是永远存在的。
+# 部分定义
 
-### 目标
+中文名：鸟币，缩写：NB  
+中文名：超级鸟币，缩写：IBIS
 
-地球上有两百多个国家，有五颜六色的肤色，有各种各样的信仰，有五花八门的政体。但其实世界已经“大同”了——中央银行系统都"长的"一模一样！国家货币，能满足贪欲却先创造了空虚、能保障安全的却先植入了恐惧。**对于想要一点点拿回自己生活的主动权的人**，请开始关注鸟币！**每个人都想摆脱被收割的命运，以前没得选，现在可以选了！今天，让爱念实现。**
+英文名：Ibiscoin, 缩写：IIC  
+英文名：Ibiscoin Pro, 缩写：IBIS  
 
-### 背景：
-经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，也就是“一手交钱 一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的。  
+符号缩写定义：
 
-1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)（推荐）     
-2. [如何通过货币奴役人民?](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)（推荐）
- 
-## 部分定义，实现见代码
-符号和缩写定义：
-
-	鸟币 缩写：NB
-	超级鸟币 缩写：IBIS
-	每个人发行的鸟币都唯一且不同，例如某用户发行了咖啡币(缩写KF):
-		唯一名称（不含'币'字）：咖啡
-		咖啡币(KF) 完整缩写为：KF-NB
-		超级咖啡币(KF) 完整缩写为：KF-IBIS
-	鸟币符号待定
+	每个人发行的鸟币都唯一且不同，例如某角色发行了咖啡币(缩写KF):
+		唯一名称：咖啡（不含'币'字）
+		咖啡币 完整缩写：KF-NB
+		超级咖啡币 完整缩写：KF-IBIS
 	
 鸟币转账精分：
 	
@@ -58,7 +72,7 @@ Ibiscoin is a open-source, skill-based currency network. A decentralized solutio
 	交易（当下价值） 达成合约、兑现承诺  
 	担保（当下的过去价值） 已经有的信用资产、技能资产、实物资产、人民币资金等  
 
-App中的名词定义和10种转账类型：  
+可能的转账类型：  
 
 	一键发币    = a1  +b1|b2 +c1|c2|c3  +d1     +e1     +f1           ——①技能合约  ——②口头承诺(剧情合约) ——③鸟币红包      
 	一键ICO    = a1  +b1    +c2|c3     +d2     +e2     +f2|(f1&f2)   ——④投资合约(有风险)  ——⑤对赌合约（能保底的投资）    
@@ -67,7 +81,6 @@ App中的名词定义和10种转账类型：
 	ICO转手    = a2  +b1    +c1|c2|c3  +d1     +e1     +f2			 ——⑧转卖④|⑤  ——⑨赠送④|⑤  
 	转赠超级鸟币 = a2  +b2    +c3        +d1     +e1     +f1           ——⑩赠送② 注：1.超级鸟币一次交易一个 2.不支持买卖（包括出售、转卖和提现）  
 
-	鸟币交易所可如下表：
 	公开的鸟币转手服务 = a2  +b1  +c1|c2|c3  +d1|d2  +e1|e2  +f1         ——转卖①|③ 
 	公开的ICO转手服务 = a2  +b1  +c1|c2|c3  +d1|d2   +e1|e2  +f2	    ——转卖④|⑤  
 
@@ -111,9 +124,7 @@ App中的名词定义和10种转账类型：
 		说明：
 		1.只要有1次状态C出现，则角色的鸟币信用为良
 		2.若有大于2次拒绝回收鸟币，则鸟币信用必然为冒险型信用
-	
-	二、超级鸟币不计入鸟币信用的计算，仅展示已兑现和已拒绝的次数
-		因为真爱是难以衡量和比较的。  
+		3.超级鸟币不计入鸟币信用的计算，仅展示已兑现和已拒绝的次数  
 		
 ### 鸟币等级
 	3大类交易行为：发行(可以是支付、赠送、出售)、转手(可以是支付、转赠、转卖)、兑现(包括兑现技能、提现现金、超级鸟币)，其中超级鸟币不支持出售、转卖和提现
@@ -134,138 +145,43 @@ App中的名词定义和10种转账类型：
 	3. 如果单一版本的数量不够兑现某个技能，但加上其他版本的此类型鸟币却够兑换时，拒绝回收不影响鸟币信用
 	4. 拒绝兑现超级鸟币不影响鸟币信用
 
-### 最小化信任点
-	唯一不存在的就是不存在本身，所以但凡交易系统，就必有信任之处！
-	“程序内部”并不能解决所有信用问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了。
+### 最小信任点
+	但凡交易系统，就必有信任之处！
+	“程序内部”并不能解决所有信用问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了。也解决不了系统的能量来源问题。
 	对于鸟币系统来说，建立一个最小化的信任点的程序就是鸟币的做到的极致，只需要相信正在使用的鸟币实例部署者一个人，就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。    
+
+### 定价可理解
+
+	使用鸟币程序初始化时的法币M2与当前使用鸟币的法币M2的比值，作为鸟币定价始终可以理解的依据。
+	比如创世鸟币于15年9月，对应当月M2为1359824.06，当前18年5月为1743063.79，比例为1.282。
+	那么当前用户设定一个如100鸟币的价格，用户可以得到提示这100鸟币约合人民币128元，即使人民币的不断贬值到1280元约合100鸟币的时候，100鸟币还是100鸟币，购买力也没有变化，而人民币的购买力却下降了10倍。所以鸟币的定价因始终可以归一而被理解，但又并没有通货膨胀的概念。
 
 ### 技能版本和鸟币版本关系
 
-![](http://ww1.sinaimg.cn/large/5d92cda0ly1freh0wlnujj21qx0ze1ds.jpg)
+![](http://ww1.sinaimg.cn/large/5d92cda0ly1freh0wlnujj21qx0ze1ds.jpg)  
 
-### 区块链
-首先鸟币的设计是完全**不迷信**区块链的，其次比特币在发行方式、信用体系、去中心化等方面具有先天缺陷，更适合作为附属于国家货币的暗中交易和洗钱工具，而非独立的货币系统，被认定为虚拟商品是很准确的。  
-1. 鸟币并不追求绝对的安全交易，而是提供公开透明的自助信用算法，因为我们认为：危险可以是充满乐趣的冒险！世界上并不存在绝对安全的系统！  
-2. 鸟币并不追求绝对永久的东西，鸟币选择相信的时间的观点是：当下是比时间更加真实的物理抽象。准确来讲，并没有真正的过去和未来，只有当下的过去和当下的未来，所以每一瞬间都可以有不同的未来和过去，所以只有当下才是真实的。区块链所谓的永久的、永远不可篡改的记录，转眼就可能镜花水月——在互联网之下，还需要基础电力、基本环境的支持  
-3. 鸟币并不贪恋空无的念头。货币超发、通货膨胀、货币干预等问题，是在现有中央银行体系的逻辑下产生的问题，而比特币情怀虽好，但在价值认定方面，使用挖矿模拟现实的设定，显得智商不足。因为很重要的一点，我们认为，**技能就是钱**，也就是等于说，每个人都**已经有'钱'**了！人人生来富有！
+更多详情见代码以及注释。
 
-### more
+# 更多资料
+经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，也就是“一手交钱 一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的。  
 
-1. 鸟币白皮书(过时待更)：[niaobi.win](http://niaobi.win)
-2. 鸟币黄皮书(过时待更)：[niaobi.win-yellow-paper](http://niaobi.win)
-3. 鸟神微信：cooerosn1  
-4. telegram：[cooerson](https://t.me/cooerson)  
+1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)     
+2. [货币的奴役](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)
 
 
-## 部署引导（development）
+# 部署引导
+欢迎大家部署自己的鸟币服务。
 
-欢迎所有开发者部署此项目为大家提供鸟币服务。需要注意：
+1. 无限制，开源闭源皆可
+2. 建议使用我们提供的UIKit稍做修改完善
 
-1. 请让用户知道是非官方出品的鸟币应用
-2. 请稍微修改官方Logo（蓝色的小鸟在一朵云中间的那个）
-3. 请按照开源协议公开你的代码
- 
- 
-### 部署前
+常规更新：
 
-1. 部署时 安装nginx
-2. 部署时 安装mongodb,添加用户名和密码 
-3. 部署时 安装golang
-4. 部署时 安装图片处理库 https://github.com/DAddYE/vips
-5. 部署时 在FontDir放置字体文件
-6. 在PublicDir放置web网站
-7. 部署时 在/etc/nginx/ssl/cert放置https证书xxx.key和xxx.pem,在PublicDir放置放置fileauth.htm
-8. 部署时 在HtmlDir放置隐私协议等单网页
-9. 二进制部署时 记得把config.toml文件和files文件夹放到同级目录
-10. 部署时 config.toml设置Debug为false
-11. 定时更新鸟币汇率
-12. 更新任何接口后，更新kApiVersion
+1. 定时更新鸟币汇率  
+2. 更新任何接口后，更新kApiVersion
 
+详细部署方法：  
+编写中..
 
-### 部署详情
-
-#### 本地配置 ~/.ssh/config
-	Host ibis  
-	HostName x.x.x.x #改成你自己的服务器地址   
-	User xxx #改成你的服务器用户名称  
-
-#### 服务器挂载数据盘
-https://www.qcloud.com/document/product/362/6735
-
-#### 使用dnspod修改域名服务商的鸟币域名的解析
-
-
-#### ubuntu部署https,使用阿里云https证书,手动版
-1. 安装nginx  
-    https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-14-04-lts  
-    https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04  
-2. 修改nginx配置  参考https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-14-04-lts
-    1. sudo mkdir -p /ibis/public/.well-known/pki-validation （第一次获取证书需要）
-    2. sudo chmod -R 755 /ibis/public/
-    3. 上传验证文件（第一次获取证书需要）  
-    
-	        scp fileauth.txt ibis:/ibis/public/.well-known/pki-validation
-
-    4. 新建nginx配置文件目录 
-    
-	        sudo mkdir -p /var/www/niaobi.org/html
-	        sudo chown -R $USER:$USER /var/www/niaobi.org/html
-	        sudo chmod -R 755 /var/www
-	        sudo vi /etc/nginx/sites-available/niaobi.org
-	        粘贴nginx_ca的内容 （第一次获取证书需要）
-	        sudo ln -s /etc/nginx/sites-available/niaobi.org /etc/nginx/sites-enabled/
-	        sudo service nginx restart
-	        测试访问web http://niaobi.org 显示nginx欢迎页 （第一次获取证书需要）
-	        下载证书（第一次获取证书需要）
-        
-    5. 复制ssl证书到服务器 
-     
-			sudo mkdir -p /etc/nginx/ssl/cert  
-			sudo chmod -R 777 /etc/nginx/ssl/cert  
-			scp xxx.key xxx.pem ibis:/etc/nginx/ssl/cert 
-	        
-    6. 粘贴nginx的内容到/etc/nginx/sites-available/niaobi.org  
-        sudo service nginx restart  
-        测试访问本机（hosts中把niaobi.org设为127.0.0.01）  
-        可以看到 https://niaobi.org/ 带有小绿锁  
-
-#### 使用腾讯云和dnspod，配置https证书，自动版；再上传nginx配置文件和下载的证书
-1.类似阿里云，参考niaobi.net的nginx文件  
-https://www.qcloud.com/document/product/400/4143
-
-#### 记得下载在浏览器访问后下载.cer文件放到iOS客户端里
-    
-#### 安装mongodb
-#### mongodb添加密码、修改端口等安全加固
-https://help.aliyun.com/knowledge_detail/37451.html  
-https://medium.com/@matteocontrini/how-to-setup-auth-in-mongodb-3-0-properly-86b60aeef7e8  
-
-	> mongo
-	> use admin
-	> db.createUser({ user: "超级管理员名称", pwd: "超级管理员密码", roles: ["root"] })
-	测试 > db.auth("超级管理员名称","超级管理员密码")
-	返回1，则为成功。
-	> use ibis
-	> db.createUser({ user: "数据库管理员名称", pwd: "数据库管理员密码", roles: [{ role: "dbOwner", db: "数据库名称" }] })
-	> db.auth("数据库管理员名称","数据库管理员密码")
-	返回1，则为成功。
-
-设置config的auth参数为true！重启mongodb服务
-
-通过以下字符串进行连接  
-mongodb://youruser:yourpassword@localhost/yourdatabase
-
-
-其他：
-网站根目录放置图标  
-/apple-touch-icon-precomposed.png  
-/apple-touch-icon.png  
-/apple-touch-icon.png   
- 
- 
-todo..
- 
-## 一键快速部署（service提供者）
-
-
-todo..
+一键部署包：  
+制作中..
