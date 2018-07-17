@@ -40,6 +40,7 @@
 于是，这样的一份开源代码就能生生不息地为人类的经济自由服务了！！！基于**技能白条**、**自助信用**的技能货币系统，只要有网的地方，就能用鸟币建立自由交易。
 
 运行中的例子：**官方鸟币APP** [https://niaobi.net](https://niaobi.net)  
+备用web站：[https://niaobi.win](https://niaobi.win)
 
 
 
