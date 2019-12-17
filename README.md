@@ -1,184 +1,243 @@
-# 鸟币——开源技能货币 
+# 部署注意事项
 
-# 本文已过时，请移步 https://niaobi.net (2019.10月-11月，主站备案中，显示非正常内容！！稍安勿躁)
+- 部署时 安装golang
+- 部署时 安装beanstalkd https://github.com/beanstalkd/beanstalkd
+- 部署时 修改配置文件:config.toml和private.go
 
-# 核心愿景
-
-地球生活的日常，最大的问题，在于人们被看似有限的能量自我奴役了。  
-当能量有限的时候，空无的念头就产生了。继而生了贪欲、愤怒和恐惧，以及恶念反复循环创造的现实。  
-一些不凡之人已经意识到了，只有跳出线性的小我思维，开启自身天赋，才能被爱的泡泡包裹着，得到源源不断的能量。    
-
-同理，对于一个经济体和货币系统，"天赋拼图"是其持久存活的**源动力**。  
-在鸟币世界里，允许每个人都能成为自己、去做最想做的事情、沉浸在热爱之中，任何一个角色，都是动态的天赋拼图中完美融洽的一块。而交易呢，是自动发生的！哈哈哈哈！并不需要刻意掌控。
-
-你也许已经体验过了被重重限制的生活，比如医生为了赚钱，可能故意让你有病；比如餐馆为了赚钱，可能让你吃毒等等。  
-所以只有真正把外部能量来源搞定，才能解决货币系统的根本问题。而在系统内部搞再多幺蛾子——如区块链，对系统整体来说是徒劳的。  
-没错，鸟币的第一个核心点：就是**造大爱**。有大爱时，逐小利就成了乐趣。  
-
-
-第二个核心点，就是重定义一个信念，**你已经有钱了**！技能就是钱，钱就是技能！  
-富足的生活源自于富足的念头，所以当用户使用鸟币的同时，就已经在重定义钱的概念。  
-"没钱"这种空无的念头，就像一根细绳牢牢拴住了大象，可以趁早忘掉它了。
-
-
-#### 心中有爱，脑中富足，美梦得以生根发芽。
-
-# 极简设计
-1. 每个人都是一个央行（一个国家的中央银行）  
-2. 每个人都可以发行自己的货币（不同名称的鸟币）  
-3. 每种鸟币的价值都是来源于天赋和技能
-4. 理论可以发行无限个鸟币（实际取决于技能被需要的程度）
-5. 定价始终可以转化成能理解的货币定价  
-6. 发行和回收组成一个完整的交易，拒绝回收时影响自助信用
-7. 更棒的是，你还可以选择建立属于你自己的鸟币服务
-
-于是，这样的一份开源代码就能生生不息地为人类的经济自由服务了！！！基于**技能白条**、**自助信用**的技能货币系统，只要有网的地方，就能用鸟币建立自由交易。
-
-运行中的例子：**官方鸟币APP** [https://niaobi.net](https://niaobi.net)  
-备用web站：[https://niaobi.win](https://niaobi.win)
+- 更新鸟币汇率，每月定时
+- 更新任何接口后，更新kApiVersion，避免客户端缓存问题
+- 更新网站资源文件后，如js、css、图片等，可以改变资源文件的文件名版本后缀，防止缓存问题（配合nginx设置）
+- 更新服务器ssl证书的时候，记得同时更新本地开发环境
 
 
 
-# 部分定义
+# 部署详情
 
-中文名：鸟币，缩写：NB  
-中文名：超级鸟币，缩写：IBIS
+# ================本地ssh配置 ~/.ssh/config=======================
+Host ibis
+HostName x.x.x.x #改成你自己的服务器地址
+User xxx #改成你的服务器用户名称
+# ===========================================
 
-英文名：Ibiscoin, 缩写：IIC  
-英文名：Ibiscoin Pro, 缩写：IBIS  
+# linux
+sudo apt-get install beanstalkd
+#后台运行
+beanstalkd & 
+# mac
+brew install beanstalk
+beanstalkd
+# gui https://github.com/xuri/aurora
 
-### 符号缩写定义：
+# ====== nginx配置 ===ubuntu16.04部署nginx1.17.3、openssl1.1.1===========
 
-    每个人发行的鸟币都唯一且不同，例如某角色发行了咖啡币(缩写KF):
-        唯一名称：咖啡（不含'币'字）
-        咖啡币 完整缩写：KF-NB
-        超级咖啡币 完整缩写：KF-IBIS
-    
-### 鸟币转账精分：
-    
-    a1发行 a2转手  
-    b1普通鸟币 b2超级鸟币  
-    c1支付(付费、买) c2出售(收费、卖) c3赠送(免费)  
-    d1一人/次 d2多人/次  
-    e1已知对象 e2未知对象  
-    f1担保交易 f2博弈交易
+# 参考 https://www.c-rieger.de/ubuntu-debian-nginx-openssl-1-1-1/
+#   sudo apt-get install build-essential zlib1g-dev libpcre3 libpcre3-dev unzip uuid-dev
 
-    博弈（当下的未来价值） 可能得到资产、可能达成的目标  
-    交易（当下价值） 达成合约、兑现承诺  
-    担保（当下的过去价值） 已经有的信用资产、技能资产、实物资产、人民币资金等  
-
-### 可能的转账类型：  
-
-    一键发币    = a1  +b1|b2 +c1|c2|c3  +d1     +e1     +f1           ——①技能合约  ——②口头承诺(剧情合约) ——③鸟币红包      
-    一键ICO    = a1  +b1    +c2|c3     +d2     +e2     +f2|(f1&f2)   ——④投资合约(有风险)  ——⑤对赌合约（能保底的投资）    
-    
-    鸟币转手    = a2  +b1    +c1|c2|c3  +d1     +e1     +f1           ——⑥转卖①|③  ——⑦赠送①|③  注：1.转手普通鸟币需要对方已经注册，发行则不必。2.适用于>=3星的普通鸟币  
-    ICO转手    = a2  +b1    +c1|c2|c3  +d1     +e1     +f2             ——⑧转卖④|⑤  ——⑨赠送④|⑤  
-    转赠超级鸟币 = a2  +b2    +c3        +d1     +e1     +f1           ——⑩赠送② 注：1.超级鸟币一次交易一个 2.不支持买卖（包括出售、转卖和提现）  
-
-    公开的鸟币转手服务 = a2  +b1  +c1|c2|c3  +d1|d2  +e1|e2  +f1         ——转卖①|③ 
-    公开的ICO转手服务 = a2  +b1  +c1|c2|c3  +d1|d2   +e1|e2  +f2       ——转卖④|⑤  
-
-### 4种接收方式  
-
-    1.通过手机号来获取WalletKey转账 
-    2.通过扫描由WalletKey生成的唯一WalletQRC二维码来转账 
-    3.通过唯一的角色名获取用户的WalletKey称来转账 
-    4.通过唯一的用户名获取WalletKey来转账
-
-### 自助信用
-
-    一、鸟币信用算法和等级定义：
-
-        首先，定义发行出去的鸟币拥有3种状态：
-        状态A：已回收 信用权重：1=100%
-        状态B：未回收 信用权重：φ=61.8034% 
-            B说明：
-            未回收状态说明双方信任存在，鸟币信用良好
-        状态C：拒绝回收 信用权重：((1-φ)/(1+φ))²= 5.5728% 
-            C说明：
-            1.信用收缩和信用扩张未达成一致，协商延后也失败的状态 
-            2.鸟币回流被拒绝后，发行者信用值会降低；若主动向债主提供服务，则可以立刻恢复正常信用值，即使债主拒绝
-
-        定义计算方法：
-        1.如果存在状态C: 鸟币信用 = (B*B数量＋C*C数量) / (B数量+C数量)
-        2.如果不存在状态C: 鸟币信用 = (A*A数量+B*B数量) / (A数量+B数量)
-
-        定义评级：
-        φ=61.8034%
-        x=(1-φ)/(1+φ)=23.6068%
-        y=1-x=76.3932%
-
-        新用户无交易数据：鸟币信用 = 0
-        冒险型：0.0% < 鸟币信用 < 23.6068%
-        进击型：23.6068% <= 鸟币信用 < 50.0%
-        良好型：50.0% <= 鸟币信用 < 61.8034%
-        优秀型：61.8034% <= 鸟币信用 < 76.3932%
-        安全型：76.3932% <= 鸟币信用 <= 100.0%
-
-        说明：
-        1.只要有1次状态C出现，则角色的鸟币信用为良
-        2.若有大于2次拒绝回收鸟币，则鸟币信用必然为冒险型信用
-        3.超级鸟币不计入鸟币信用的计算，仅展示已兑现和已拒绝的次数  
-        
-### 鸟币等级
-    3大类交易行为：发行(可以是支付、赠送、出售)、转手(可以是支付、转赠、转卖)、兑现(包括兑现技能、提现现金、超级鸟币)，其中超级鸟币不支持出售、转卖和提现
-    默认发行后即可'兑现技能'，默认占1星（鸟币等级一共5星）
-    1. 是否可以'转赠'鸟币，占普通鸟币一颗星
-    2. 是否可以'转卖'鸟币，占普通鸟币一颗星
-    3. 是否可以'提现（RMB）'，占普通鸟币一颗星
-    4. 是否可以'立即提现（RMB）'，占普通鸟币一颗星
-        
-### 鸟币转账
-    1. 超级鸟币一次交易一个 
-    2. 超级鸟币不支持买卖（包括出售、转卖和提现）
-    3. 转手普通鸟币需要对方已经注册，发行则不必
-        
-### 鸟币兑现
-    1. 兑现鸟币(包括兑现技能、提现现金、履行超级鸟币的承诺)
-    2. 鸟币回收接受时间未24小时，超时未接受将自动视为拒绝回收
-    3. 如果单一版本的数量不够兑现某个技能，但加上其他版本的此类型鸟币却够兑换时，拒绝回收不影响鸟币信用
-    4. 拒绝兑现超级鸟币不影响鸟币信用
-
-### 最小信任点
-    但凡交易系统，就必有信任之处！
-    “程序内部”并不能解决所有信用问题，比如怀疑、否定，都是人的大脑的功能的一部分，区块链也解决不了。也解决不了系统的能量来源问题。
-    对于鸟币系统来说，建立一个最小化的信任点的程序就是鸟币的做到的极致，只需要相信正在使用的鸟币实例部署者一个人，就可以让整个系统成立。部署鸟币的开发者越多，用户能选择的服务点就越多。    
-
-### 定价可理解
-
-    使用鸟币程序初始化时的法币M2与当前使用鸟币的法币M2的比值，作为鸟币定价始终可以理解的依据。
-    比如创世鸟币于15年9月，对应当月M2为1359824.06，当前18年5月为1743063.79，比例为1.282。
-    那么当前用户设定一个如100鸟币的价格，用户可以得到可以理解的提示：这100鸟币约合人民币128元，
-    即使人民币的不断贬值到1280元约合100鸟币的时候，100鸟币还是100鸟币，购买力也没有变化，而人民币的购买力却下降了10倍。
-    所以鸟币的定价因始终可以归一而被理解，但又并没有通货膨胀的概念。
-
-### 技能版本和鸟币版本关系
-
-![](http://ww1.sinaimg.cn/large/5d92cda0ly1freh0wlnujj21qx0ze1ds.jpg)  
-
-更多详情见代码以及注释。
-
-# 更多资料
-经济是由数个交易组成的，每个交易的根本在于人和人之间的**信任**，也就是“一手交钱 一手交货”。而现在主流的经济系统都是以**不信任**为假设前提的，所以看起来交易双方就需要第三方的**监督**、**强制**、**保护**等等。但是第三方自己呢，是**自我监管**的。  
-
-1. [货币的秘密](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET.md)     
-2. [货币的奴役](https://github.com/ibiscoin/ibiscoin/blob/master/SECRET2.md)
+    sudo -s
+    cd /usr/local/src
+    wget http://nginx.org/keys/nginx_signing.key && apt-key add nginx_signing.key
 
 
-# 部署引导
-欢迎大家部署自己的鸟币服务。
+    vi /etc/apt/sources.list
+#添加以下两行
+UBUNTU:
+    deb http://nginx.org/packages/mainline/ubuntu/ bionic nginx
+    deb-src http://nginx.org/packages/mainline/ubuntu/ bionic nginx
 
-1. 无限制，开源闭源皆可
-2. 建议使用我们提供的UIKit稍做修改完善
+## openssl
+    apt update
+    mkdir /usr/local/src/nginx && cd /usr/local/src/nginx/
+    apt install dpkg-dev -y && apt source nginx
+    cd /usr/local/src && apt install git -y
+    git clone https://github.com/openssl/openssl.git
+    cd openssl && git branch -a
 
-常规更新：
+    git checkout OpenSSL_1_1_1-stable
 
-1. 定时更新鸟币汇率  
-2. 更新任何接口后，更新kApiVersion
+## nginx
+    vi /usr/local/src/nginx/nginx-1.17.2/debian/rules
+    在CFLAGS后，最后添加 
+            --with-openssl=/usr/local/src/openssl，
+        和其他模块 比如 添加缓存清理ngx_cache_purge和google的pagespeed模块编译
+            --add-module=/usr/local/src/ngx_cache_purge-2.3 --add-module=/usr/local/src/incubator-pagespeed-ngx-1.13.35.2-stable
+        debug块也要添加。
+    把 dh_shlibdeps -a 修改为
+        dh_shlibdeps -a --dpkg-shlibdeps-params=--ignore-missing-info
+    打开 vi /usr/local/src/nginx/nginx-1.17.2/auto/cc/gcc
+    注释掉 #CFLAGS="$CFLAGS -Werror" 避免编译警告退出
+    切回路径 
+        cd /usr/local/src/nginx/nginx-1.17.2/
+    开始编译
+        apt build-dep nginx -y && dpkg-buildpackage -b
+    编译好后，删除现在可能有的nginx
+        apt remove nginx nginx-common nginx-full -y --allow-change-held-packages
+    安装最新的
+        dpkg -i nginx_1.17.2*.deb
+        systemctl unmask nginx
+    重启
+        service nginx restart
+    防止自动升级
+        apt-mark hold nginx
+    最后查看信息
+        nginx -V
+# ===========================================
 
-详细部署方法：  
-编写中..
 
-一键部署包：  
-制作中..
+
+#=================把web网站部署到nginx======================
+# 一、nginx通用配置修改
+    #1.创建nginx防抓取名单，粘贴"bad_bot_通用.conf"（已除去了google、yahoo和baidu）的内容，数据来自于
+    #https://github.com/JayBizzle/Crawler-Detect
+    sudo vi /etc/nginx/bad_bot.conf
+
+    #2.修改nginx配置，资源文件均防抓取，open文件夹中的资源除外。
+    sudo vi /etc/nginx/nginx.conf
+    #添加"通用nginx.conf"中的代码，reload后默认的nginx缓存文件夹在/data/nginx_cache/
+
+# 二、部署web网站
+1.申请腾讯免费ssl证书
+2.复制ssl证书到服务器
+    #新建目录
+    sudo mkdir -p /etc/nginx/ssl/cert
+    sudo chmod -R 777 /etc/nginx/ssl/cert
+    #复制到服务器
+    scp xxx.key xxx.crt ibis:/etc/nginx/ssl/cert
+    #生成dhparam.pem
+    sudo openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+3.新建相关配置文件 
+    #pagespeed缓存文件夹是/data/pagespeed_cache和/data/ngx_pagespeed/，重启nginx的时候会自动生成
+    #粘贴nginx配置
+    sudo vi /etc/nginx/sites-available/xingdongpai.com
+    #创建软链接
+    sudo ln -s /etc/nginx/sites-available/xingdongpai.com /etc/nginx/sites-enabled/
+    #平滑重启
+    sudo nginx -s reload
+4.将web html文件放置在配置的路径 
+    sudo mkdir -p /act/public
+    sudo chmod -R 777 /act/public
+    上传web文件
+5.修改dnspod中的指向服务器ip
+6.注意默认js、css、图片等资源文件缓存为30天，除了purge插件清除的方式外，最好每次更改文件名的版本。
+
+# 其他：
+//linux查看所有端口占用情况，卡死的nginx可以直接kill
+    sudo netstat -ntpl
+
+## mac开发环境下：
+Docroot is: /usr/local/var/www
+
+#测试端口8080
+The default port has been set in /usr/local/etc/nginx/nginx.conf to 8080 so that
+nginx can run without sudo.
+
+#在server目录下粘贴nginx配置
+nginx will load all files in /usr/local/etc/nginx/servers/.
+
+To have launchd start nginx now and restart at login:
+  brew services start nginx
+Or, if you don't want/need a background service you can just run:
+  nginx
+
+
+//mac查看某个端口占用情况
+  lsof -i tcp:8080
+//查看错误日志
+cat /usr/local/var/log/nginx/error.log
+//常用命令
+  nginx               启动nginx
+  nginx -s stop       快速关闭Nginx，可能不保存相关信息，并迅速终止web服务。
+  nginx -s quit       平稳关闭Nginx，保存相关信息，有安排的结束web服务。
+  nginx -s reload     因改变了Nginx相关配置，需要重新加载配置而重载。
+  nginx -s reopen     重新打开日志文件。
+  nginx -c filename   为 Nginx 指定一个配置文件，来代替缺省的。
+  nginx -t            不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。
+  nginx -v            显示 nginx 的版本。
+  nginx -V            显示 nginx 的版本，编译器版本和配置参数。
+# =======================================
+
+
+# ==================== 安装部署golang ===============================
+https://www.digitalocean.com/community/tutorials/how-to-install-go-1-6-on-ubuntu-16-04
+
+
+1.项目用到了https://github.com/DAddYE/vips库，需要单独安装
+    sudo apt-get install automake build-essential git gobject-introspection libglib2.0-dev libjpeg-turbo8-dev libpng12-dev gtk-doc-tools
+    cd /usr/local/src
+    git clone git://github.com/libvips/libvips.git
+    cd libvips
+    ./autogen.sh
+    ./configure --enable-debug=no --without-python --without-fftw --without-libexif --without-libgf --without-little-cms --without-orc --without-pango --prefix=/usr
+    make
+    sudo make install
+    sudo ldconfig
+2.上传源码，在源码目录下执行：
+    go get -v
+    会自动下载依赖包
+3.调试：go run main.go
+#=================================================================
+
+
+#========================安装运行postgres==========================
+#-----------------mac下开发---------------
+安装postgres.app 一键启动
+安装postico(创建索引功能方便)和navicat premium（创建字段功能和导出sql功能完善），
+1.使用gui创建表，使用xorm 生成model
+xorm reverse postgres "user=postgres password='' dbname=ibispay host=127.0.0.1 port=5432 sslmode=disable" /Users/cooerson/Documents/go/src/github.com/go-xorm/cmd/xorm/templates/goxorm  /Users/cooerson/Desktop
+2.修改需要修改的字段，使用 xorm再次sync数据库，修正所有warming
+3.使用navicat premium导出sql，供部署时使用，也可生成Diagram备份。
+
+---------------部署-------------------
+1.新建ibispay数据库，然后执行ibispay.sql生成数据库
+
+
+
+#====================预编译html模板======================================
+
+hero -source=/Users/cooerson/Documents/go/src/ibis.love-go/templates/order
+
+#=======================================================================
+
+
+
+#---------------------使用endless运行release程序------------
+linux:
+查看占用的端口
+sudo netstat -ntpl
+kill 占用6180的端口
+
+1.修改config中的debug为false
+2.在go源码目录下执行
+go build main.go
+3.执行./main
+得到 pid 如 21561
+4.另外开一个终端
+执行 kill -1 21561 即可
+
+mac：
+查看占用的端口
+lsof -i tcp:6180
+其余同linux
+
+#=======================================
+
+
+
+
+
+
+
+#========其他：apt卸载nginx方法===========
+# apt卸载nginx方法
+卸载方法1.
+    ##删除nginx，保留配置文件
+    sudo apt-get remove nginx
+    #删除配置文件
+    rm -rf /etc/nginx
+
+卸载方法2.
+    ##删除nginx连带配置文件
+    sudo apt-get purge nginx # Removes everything.
+
+    #卸载不再需要的nginx依赖程序
+    sudo apt-get autoremove
+# ======================================

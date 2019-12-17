@@ -1,0 +1,167 @@
+#部署时按需求修改此配置文件
+Debug = true
+
+[server]
+Host = "127.0.0.1"
+Port = "2764"
+#允许跨域访问的网站
+AllowedHost = [
+    "reqing.org", 
+    "www.reqing.org",
+    "xingdognpai.com", 
+    "www.xingdognpai.com",
+    "xingdongpai.org", 
+    "www.xingdongpai.org",
+    "niaobi.org", 
+    "www.niaobi.org",
+    "niaobi.net", 
+    "www.niaobi.net",
+    "ibis.love", 
+    "www.ibis.love",
+    "kunlun.fun", 
+    "www.kunlun.fun",
+]
+
+[dir]
+# RootDir 部署时的公共文件夹根目录
+RootDir = "/Users/cooerson/Documents/go/src/reqing.org/ibispay"
+# DataDir 用户文件目录，如：RootDir+/files/udata/userid/pic(or video..)
+DataDir = "/files/udata"
+
+# 鸟币汇率 Exchange Rate：[1鸟币合人民币=人民币:鸟币=(RmbM2Now/RmbM2Init):1]
+# 中国官方来源 http://www.pbc.gov.cn/diaochatongjisi/116219/116319/3750274/3750284/index.html
+[exr]
+# 鸟币创世时，所在国家的M2：2015年9月人民币M2
+RmbM2Init = 1359824.06
+# 当前所在国家M2：2019年11月人民币M2。
+# 自动获取失效时，系统会自动使用此处数据。如使用此处数据则需要管理员每月定期手动更新！  
+RmbM2Now = 1961400.00
+
+[name]
+# 保留一些系统关键字，避免引发歧义和混淆
+# 比较英文是否相同时，不区分大小写
+SysName = [
+    "COIN","BOND","IBIS","PAY","XINGDONGPAI","NIAOBI","RMB",
+    "鸟币","血盟","契约","支付","官方","合同","合约","认证","国"]
+
+
+[pic]
+MaxUploadPic  = 3200000  #上传单图最大3MB
+MaxUploadPics = 21000000 #上传多图最大20MB
+QualityOfPic  = 85       #图片压缩质量
+# 图片后缀，例如：id_avatar_default.jpg
+PicNameSuffixDefault = "default"
+PicNameSuffixOriginal = "-original"
+PicNameSuffixBiggest = "-biggest"
+PicNameSuffixLarge = "-large"
+PicNameSuffixMiddle = "-middle"
+PicNameSuffixSmall = "-small"
+PicNameSuffixThumbnail = "-thumbnail"
+# 二维码缩略图大小 
+QRCSuffix = "_qrc"
+QRSizeBiggest = 1080
+QRSizeLarge = 750
+QRSizeMiddle = 480
+QRSizeSmall = 250
+# 正方形头像缩略图大小 
+AvatarSuffix = "_avatar_"
+AvatarSizeDefault = 400
+AvatarSizeBiggest = 1024
+AvatarSizeLarge = 750
+AvatarSizeMiddle = 480
+AvatarSizeSmall = 160
+# 技能图片缩略图大小
+SkillPicBiggest = 1920
+SkillPicLarge = 1280
+SkillPicMiddle = 750
+SkillPicSmall = 480
+SkillPicLongBigOri = 1280
+SkillPicLongOri = 750
+SkillPicLongBigThum = 480
+SkillPicLongThum = 240
+# 最大长宽比，不超过了短边/长边=0.025（如750:30000）
+SkillPicScaleMax = 0.025
+
+#兑现请求状态
+[req]
+ReqBearer10 = "已发送兑现请求，等待对方确认（2小时内未接受将影响其鸟币信用）"
+ReqIssuer10 = "收到新的兑现请求（请在2小时内确认，否则将影响鸟币信用）"
+ReqBearer11 = "已发送血盟兑现请求，等待对方确认（2小时内未接受，将影响其血盟失败次数）"
+ReqIssuer11 = "收到新的血盟兑现请求（请在2小时内确认，否则将影响血盟失败次数）"
+ReqBearer22 = "兑现请求超时未接受，对方鸟币信用受到影响"
+ReqIssuer22 = "由于超时，系统自动拒绝了对方的请求，鸟币信用受到影响"
+
+
+[err]
+#E1000 参数绑定失败
+E1000 = "参数绑定失败"
+#E1001 参数验证失败
+E1001 = "参数验证失败"
+#E1002 参数格式化失败
+E1002 = "参数格式化失败"
+#E1003 数据库错误
+E1003 = "数据库连接错误"
+#E1004 数据库错误
+E1004 = "数据查询或操作失败"
+#E1005 未找到数据
+E1005 = "未找到数据"
+#E1006 名称已被占用
+E1006 = "名称已被占用"
+#E1007 手机号已被占用
+E1007 = "手机号已被占用"
+#E1008 手机号格式错误
+E1008 = "手机号格式错误"
+#E1009 手机号未注册
+E1009 = "手机号未注册"
+#E1010 用户认证失败
+E1010 = "用户认证失败"
+#E1011 路由不存在
+E1011 = "页面不存在"
+#E1012 = 老密码错误
+E1012 = "老密码错误"
+#E1013 = 更新密码失败
+E1013 = "更新密码失败"
+#E1014 = 文件体积过大
+E1014 = "文件体积过大"
+#E1015 = 处理图像错误
+E1015 = "处理图像错误"
+#E1016 = 上传图像失败
+E1016 = "上传图像失败"
+#E1017 = 长图长宽比过大
+E1017 = "长图长宽比过大"
+#E1018 账号不存在
+E1018 = "账号不存在"
+#E1019 处理转账中
+E1019 = "处理转账中，请稍后再试"
+#E1020 鸟币不存在
+E1020 = "鸟币不存在"
+#E1021 请勿使用转账接口兑现鸟币
+E1021 = "请勿使用转账接口兑现鸟币"
+#E1022 当前没有可交易技能
+E1022 = "当前没有可交易技能"
+#E1023 鸟币数量不足
+E1023 = "鸟币数量不足"
+#E1024 不能转账给自己
+E1024 = "不能转账给自己"
+#E1025 并不拥有此鸟币
+E1025 = "并不拥有此鸟币"
+#E1026 技能名称不可重复
+E1026 = "技能名称不可重复"
+#E1027 技能数量达到上限
+E1027 = "技能数量达到上限"
+#E1028 不能自我兑现
+E1028 = "不能自我兑现"
+#E1029 2小时内只能向同一用户请求一次
+E1029 = "2小时内只能向同一个人发送一次请求"
+#E1030 获取鸟币明细失败
+E1030 = "获取鸟币明细失败"
+
+[tips]
+# T1000 转账成功
+T1000 = "转账成功"
+# T1001 收到了一笔转账
+T1001 = "收到了一笔转账"
+# T1002 对方已回收鸟币
+T1002 = "对方已回收鸟币"
+# T1003 鸟币已回收
+T1003 = "鸟币已回收"
