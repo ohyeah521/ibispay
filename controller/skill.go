@@ -32,12 +32,12 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1019)
 	}
 
-	//上架的技能数量不能超过500
+	//上架的技能数量不能超过200
 	count, err := pq.Count(&db.Skill{Owner: coinName})
 	if err != nil {
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
 	}
-	if count >= 500 {
+	if count+1 > config.MaxSkillNum {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1027)
 	}
 

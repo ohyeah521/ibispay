@@ -301,7 +301,7 @@ func NewPay(ctx iris.Context, form model.NewPayForm) {
 				has, err = pq.Get(&issuerSS)
 				checkDBErr(err)
 				if has == false {
-					e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1022)
+					e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1031)
 				}
 				mutiPay := db.Pay{TransCoin: txCoinName, Receiver: receiverName, Payer: payerName, IsIssue: isIssue, IsMarker: form.IsMarker, GUID: guid, SnapSetID: issuerSS.ID, Amount: uint64(receiverSubSumAdd)}
 				pays = append(pays, &mutiPay)
@@ -446,7 +446,7 @@ func NewReq(ctx iris.Context, form model.NewReqForm) {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1023)
 	}
 
-	//2小时内只能向同一用户请求一次（未处理请求的情况下，即state=10）
+	//2小时内只能向同一用户请求一次（未处理请求的情况即state=10）
 	r := db.Req{Closed: false, Issuer: form.Issuer, Bearer: coinName, State: 10}
 	has, err = pq.UseBool().Cols("created").Desc("created").Get(&r)
 	checkDBErr(err)
@@ -542,6 +542,21 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1018)
 	}
 
+	//检查要兑现的技能快照是否存在
+	exist, err = pq.ID(form.SnapID).Exist(&db.Snap{})
+	checkDBErr(err)
+	if exist == false {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1032)
+	}
+
+	//检查要请求是否存在
+	req := db.Req{ID: form.ReqID, Closed: false, State: 10}
+	exist, err = pq.UseBool().Get(&req)
+	checkDBErr(err)
+	if exist == false {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1033)
+	}
+
 	//=====参数整理=====
 	issuer := coinName
 	bearer := form.Bearer
@@ -600,28 +615,31 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 		limit := 10 //每次获取10条
 		breakNow := false
 		useOtherSnaps := false
+		guid := xid.New().String()
 		leftAmount := int64(form.Amount)
-
-	USE_OTHER_SNAPS:
+		snapID := []uint64{form.SnapID}
+		data, _ := json.Marshal(snapID)
 		for {
 			subsums := []*db.SubSum{}
 			if useOtherSnaps == false {
 				//---1.消耗兑现时选择的版本的鸟币----
-				ssCount, err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("snap_ids @> ?", []uint64{form.SnapID}).Desc("snap_set_id").Limit(limit, start).FindAndCount(&subsums)
+				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("snap_ids @> ?", string(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
 				checkDBErr(err)
+				util.LogDebug("useOtherSnaps=false")
 				util.LogDebugAll(subsums)
-				if ssCount == 0 {
+				if len(subsums) == 0 {
 					start = 0
 					useOtherSnaps = true
-					goto USE_OTHER_SNAPS
+					continue
 				}
 			} else {
 				//---2.消耗剩余的版本的鸟币（按倒序排列）---
-				ssCount, err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).Desc("snap_set_id").Limit(limit, start).FindAndCount(&subsums)
+				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("NOT (snap_ids @> ?)", string(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
 				checkDBErr(err)
+				util.LogDebug("useOtherSnaps=true")
 				util.LogDebugAll(subsums)
-				if ssCount == 0 {
-					goto Exit
+				if len(subsums) == 0 {
+					break
 				}
 			}
 
@@ -654,7 +672,7 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 				bearerSubSumsToUpdate = append(bearerSubSumsToUpdate, &bearerSubSum)
 
 				//每个版本的鸟币都需要新建一个repay
-				mutiRepay := db.Repay{ReqID: form.ReqID, SnapID: form.SnapID, Bearer: bearer, Issuer: issuer, Amount: uint64(issuerSubSumAdd), IsMarker: false}
+				mutiRepay := db.Repay{ReqID: form.ReqID, SnapID: form.SnapID, SnapSetID: subsum.SnapSetID, GUID: guid, Bearer: bearer, Issuer: issuer, Amount: uint64(issuerSubSumAdd), IsMarker: false}
 				repays = append(repays, &mutiRepay)
 				if breakNow {
 					goto Exit
@@ -666,11 +684,11 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 	}
 
 	//新的news
-	bearerNews := db.News{Owner: bearer, Desc: config.Public.Tips.T1002, Amount: bearerAdd, Buddy: issuer}
-	issuerNews := db.News{Owner: issuer, Desc: config.Public.Tips.T1003, Amount: issuerAdd, Buddy: bearer}
+	bearerNews := db.News{Owner: bearer, Desc: config.Public.Tips.T1002, Amount: bearerAdd, Buddy: issuer, SourceID: form.ReqID, Table: config.NewsTableReq}
+	issuerNews := db.News{Owner: issuer, Desc: config.Public.Tips.T1003, Amount: issuerAdd, Buddy: bearer, SourceID: form.ReqID, Table: config.NewsTableReq}
 
 	//数据库事务
-	//处理pay表、sum表/sub_sum表、news表/info表
+	//处理pay表、sum表/sub_sum、news表/info表、req表
 	_, err = pq.Transaction(func(session *xorm.Session) (interface{}, error) {
 		//new pay
 		if len(repays) > 0 {
@@ -734,6 +752,12 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 			return nil, err
 		}
 		_, err = session.Where("owner = ?", issuer).UseBool().Update(&db.Info{HasNews: true})
+		if err != nil {
+			return nil, err
+		}
+
+		//update req
+		_, err = session.ID(form.ReqID).Update(&db.Req{State: 20})
 		if err != nil {
 			return nil, err
 		}

@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-//Info 动态信息，对应info表
+//Info 动态信息，对应info表，此表不可刪除
 type Info struct {
 	Owner   string    `json:"owner" xorm:"not null pk VARCHAR(20)"` //鸟币号
 	Updated time.Time `json:"updated" xorm:"updated"`

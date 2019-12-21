@@ -43,66 +43,82 @@ func BindForm() {
 
 func register() {
 	hero.Register(func(ctx iris.Context) (form RegisterForm) {
-		common(ctx, &form, form.RegisterFieldTrans())
+		handleJSON(ctx, &form, form.RegisterFieldTrans())
 		return
 	})
 }
 
 func login() {
 	hero.Register(func(ctx iris.Context) (form LoginForm) {
-		common(ctx, &form, form.LoginFieldTrans())
+		handleJSON(ctx, &form, form.LoginFieldTrans())
 		return
 	})
 }
 
 func newPwd() {
 	hero.Register(func(ctx iris.Context) (form NewPwdForm) {
-		common(ctx, &form, form.NewPwdFieldTrans())
+		handleJSON(ctx, &form, form.NewPwdFieldTrans())
 		return
 	})
 }
 
 func newProfie() {
 	hero.Register(func(ctx iris.Context) (form ProfileForm) {
-		common(ctx, &form, form.ProfileFieldTrans())
+		handleJSON(ctx, &form, form.ProfileFieldTrans())
 		return
 	})
 }
 
 func newSkill() {
 	hero.Register(func(ctx iris.Context) (form NewSkillForm) {
-		common(ctx, &form, form.NewSkillFieldTrans())
+		handleForm(ctx, &form, form.NewSkillFieldTrans())
 		return
 	})
 }
 
 func newPay() {
 	hero.Register(func(ctx iris.Context) (form NewPayForm) {
-		common(ctx, &form, form.NewPayFieldTrans())
+		handleJSON(ctx, &form, form.NewPayFieldTrans())
 		return
 	})
 }
 
 func newReq() {
 	hero.Register(func(ctx iris.Context) (form NewReqForm) {
-		common(ctx, &form, form.NewReqFieldTrans())
+		handleJSON(ctx, &form, form.NewReqFieldTrans())
 		return
 	})
 }
 
 func newRepay() {
 	hero.Register(func(ctx iris.Context) (form NewRepayForm) {
-		common(ctx, &form, form.NewRepayFieldTrans())
+		handleJSON(ctx, &form, form.NewRepayFieldTrans())
 		return
 	})
 }
 
 //=========common func==========
 
-func common(ctx iris.Context, form interface{}, fieldTrans FieldTrans) {
+func handleJSON(ctx iris.Context, form interface{}, fieldTrans FieldTrans) {
 	e := new(CommonError)
 	// ---bind form---
 	err := ctx.ReadJSON(form)
+	e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1000, nil)
+
+	//---check struct---
+	err = validate.Struct(form)
+	errComine := NewValidatorErrorDetail(trans, err, fieldTrans)
+	e.CheckError(ctx, errComine.Err, iris.StatusNotAcceptable, config.Public.Err.E1001, errComine.Detail)
+
+	//------format------
+	err = util.Strings(form)
+	e.CheckError(ctx, err, iris.StatusNotAcceptable, config.Public.Err.E1002, nil)
+}
+
+func handleForm(ctx iris.Context, form interface{}, fieldTrans FieldTrans) {
+	e := new(CommonError)
+	// ---bind form---
+	err := ctx.ReadForm(form)
 	e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1000, nil)
 
 	//---check struct---

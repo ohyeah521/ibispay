@@ -18,5 +18,5 @@ type Skill struct {
 	Desc    string   `json:"desc,omitempty" xorm:"index VARCHAR(10000)"`                             //技能描述，少于10000个字符
 	Pics    []*Pic   `json:"pics,omitempty" xorm:"index JSONB"`                                      //技能图片大小参考config
 	Tags    []string `json:"tags,omitempty" xorm:"index JSONB"`                                      //类型如：技能、实物、服务、数字商品等，或者其他自定义标签
-	Version uint64   `json:"version" xorm:"version"`                                                 //更新时自动加1
+	Version uint64   `json:"version" xorm:"not null version"`                                        //更新时自动加1
 }

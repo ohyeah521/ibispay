@@ -10,7 +10,8 @@ jwt秘钥:发光!鸟神号海盗船起飞啦
 */
 const (
 	//APIVision api版本号
-	APIVision = "1.0" //鸟币API版本号
+	APIVision   = "1.0" //鸟币API版本号
+	MaxSkillNum = 200   //每个用户最多可以上架多少個技能
 	//pg debug db
 	PQIrisIDKey = "iris_pq"
 	PQHost      = "localhost"
