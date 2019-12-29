@@ -84,7 +84,7 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 			img.Owner = coinName
 			img.GUID = xid.New().String()
 			//临时保存原图到路径：./files/udata/鸟币号/pic/鸟币号_guid-original.jpg
-			pid := coinName + "_" + xid.New().String()
+			pid := coinName + "_" + img.GUID
 			meta := db.NewJPGMeta(pid+conf.PicNameSuffixOriginal, 0, 0)
 			dirOriginal := db.GetUserPicDir(coinName, meta)
 			f, err := file.Open()
@@ -137,7 +137,7 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 			pic := new(db.Pic)
 			if govalidator.IsNull(img.OriginalDir) == false {
 				//===图片首次上传===
-				pidPrefix := coinName + "_" + xid.New().String()
+				pidPrefix := coinName + "_" + img.GUID
 				var delPic = func(err error) bool {
 					if err != nil {
 						util.LogDebugAll(err)

@@ -397,7 +397,7 @@ COMMENT ON COLUMN "public"."req"."bearer" IS '持有者的鸟币号';
 COMMENT ON COLUMN "public"."req"."issuer" IS '发行者的鸟币号';
 COMMENT ON COLUMN "public"."req"."is_marker" IS '是否是血盟，是则忽略skill_id';
 COMMENT ON COLUMN "public"."req"."amount" IS '兑现的鸟币数量，大于0的整数';
-COMMENT ON COLUMN "public"."req"."state" IS '兑现状态（兑现时需要发行者确认，默认24小时响应，超时自动视为拒绝)';
+COMMENT ON COLUMN "public"."req"."state" IS '兑现状态（兑现时需要发行者确认，默认2小时响应，超时自动视为拒绝)';
 COMMENT ON COLUMN "public"."req"."closed" IS '是否已关闭交易';
 COMMENT ON TABLE "public"."req" IS 'Req 兑现请求(request)，对应req表，2小时内只能向同一用户请求一次。此表不可删除
 兑现状态 state：

@@ -33,7 +33,7 @@ type Req struct {
 	Issuer   string    `json:"issuer" xorm:"not null index(req_bearer_issuer_idx) index(req_bearer_issuer_state_idx) index index(req_issuer_state_idx) VARCHAR(20)"` //发行者的鸟币号
 	IsMarker bool      `json:"isMarker" xorm:"not null BOOL"`                                                                                                        //是否是血盟，是则忽略snap_id
 	Amount   uint64    `json:"amount" xorm:"not null BIGINT"`                                                                                                        //兑现的鸟币数量，大于0的整数
-	State    uint8     `json:"state" xorm:"not null default 1 index(req_bearer_issuer_state_idx) index(req_bearer_state_idx) index(req_issuer_state_idx) SMALLINT"`  //兑现状态（兑现时需要发行者确认，默认24小时响应，超时自动视为拒绝)
+	State    uint8     `json:"state" xorm:"not null default 1 index(req_bearer_issuer_state_idx) index(req_bearer_state_idx) index(req_issuer_state_idx) SMALLINT"`  //兑现状态（兑现时需要发行者确认，默认2小时响应，超时自动视为拒绝)
 	Closed   bool      `json:"closed" xorm:"not null default false BOOL"`                                                                                            //是否已关闭交易
 	Created  time.Time `json:"created" xorm:"not null created"`
 	Updated  time.Time `json:"updated" xorm:"updated"`

@@ -503,7 +503,7 @@ func NewReq(ctx iris.Context, form model.NewReqForm) {
 		this job. If the worker does not delete, release, or bury the job within
 		ttr time, the job will time out and the server will release the job.
 		*/
-		//2小时后检查是否接受，ttr为1秒（数据库操作通常只需要十几毫秒）
+		//2小时后检查是否接受，ttr为1秒（数据库操作通常是毫秒级别）
 		_, err = tube.Put(byteReq, 0, 2*time.Hour, 1*time.Second)
 		if err != nil {
 			return nil, err
@@ -549,12 +549,16 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1032)
 	}
 
-	//检查要请求是否存在
+	//检查要请求是否存在和匹配
 	req := db.Req{ID: form.ReqID, Closed: false, State: 10}
 	exist, err = pq.UseBool().Get(&req)
 	checkDBErr(err)
 	if exist == false {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1033)
+	}
+	if req.SnapID != form.SnapID {
+		pq.ID(form.ReqID).UseBool("closed").Update(&db.Req{Closed: true, State: 33})
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1035)
 	}
 
 	//=====参数整理=====

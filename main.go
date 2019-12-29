@@ -108,6 +108,7 @@ func main() {
 		skill.Use(jwtHandler.Serve)
 		{
 			skill.Post("/new", picsSizeHandler, transHandler, hero.Handler(controller.NewSkill)) //添加技能
+			// skill.Put("/update")
 			//todo 修改技能(transHandler)
 			//todo 添加索引，搜索技能
 		}
