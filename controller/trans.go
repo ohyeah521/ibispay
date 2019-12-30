@@ -503,11 +503,12 @@ func NewReq(ctx iris.Context, form model.NewReqForm) {
 		this job. If the worker does not delete, release, or bury the job within
 		ttr time, the job will time out and the server will release the job.
 		*/
-		//2小时后检查是否接受，ttr为1秒（数据库操作通常是毫秒级别）
-		_, err = tube.Put(byteReq, 0, 2*time.Hour, 1*time.Second)
+		//2小时后检查是否接受，ttr为5秒（数据库操作通常是毫秒级别）
+		_, err = tube.Put(byteReq, 0, 20*time.Second, 5*time.Second)
 		if err != nil {
 			return nil, err
 		}
+		defer conn.Close()
 
 		return nil, nil
 	})

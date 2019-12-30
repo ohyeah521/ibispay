@@ -12,7 +12,7 @@
  Target Server Version : 110005
  File Encoding         : 65001
 
- Date: 12/12/2019 23:15:33
+ Date: 30/12/2019 16:34:10
 */
 
 
@@ -360,7 +360,10 @@ CREATE TABLE "public"."repay" (
   "issuer" varchar(20) COLLATE "pg_catalog"."default" NOT NULL,
   "is_marker" bool NOT NULL,
   "amount" int8 NOT NULL,
-  "created" timestamp(6) NOT NULL
+  "created" timestamp(6) NOT NULL,
+  "req_id" int8 NOT NULL,
+  "guid" varchar(36) COLLATE "pg_catalog"."default",
+  "snap_set_id" int8
 )
 ;
 ALTER TABLE "public"."repay" OWNER TO "postgres";
@@ -370,6 +373,9 @@ COMMENT ON COLUMN "public"."repay"."issuer" IS '发币者的鸟币号';
 COMMENT ON COLUMN "public"."repay"."is_marker" IS '是否是血盟，血盟为true时，忽略技能ID';
 COMMENT ON COLUMN "public"."repay"."amount" IS '兑现的数量';
 COMMENT ON COLUMN "public"."repay"."created" IS '交易时间';
+COMMENT ON COLUMN "public"."repay"."req_id" IS '兑现请求ID';
+COMMENT ON COLUMN "public"."repay"."guid" IS '兑现时可能用到多个版本的鸟币，每个版本都需要新建一个repay，但这些repay都共享同一个guid';
+COMMENT ON COLUMN "public"."repay"."snap_set_id" IS '技能快照组id';
 COMMENT ON TABLE "public"."repay" IS 'Repay 兑现的鸟币记录，对应repay表。此表只可新建，不可删改。持币者发起兑现请求，发币者以技能兑现承诺(repay)
 注意：支付表=鸟币发行记录+鸟币转手记录，兑现表=鸟币兑现记录。所有交易=发行+转手+兑现。
 marker血盟，歃血为盟之意，也称作超级鸟币，承诺为持有者(bearer)做任何一件事。';
@@ -392,14 +398,14 @@ CREATE TABLE "public"."req" (
 )
 ;
 ALTER TABLE "public"."req" OWNER TO "postgres";
-COMMENT ON COLUMN "public"."req"."snap_id" IS '具体要兑现的技能ID';
+COMMENT ON COLUMN "public"."req"."snap_id" IS '具体要兑现的技能快照ID';
 COMMENT ON COLUMN "public"."req"."bearer" IS '持有者的鸟币号';
 COMMENT ON COLUMN "public"."req"."issuer" IS '发行者的鸟币号';
 COMMENT ON COLUMN "public"."req"."is_marker" IS '是否是血盟，是则忽略skill_id';
 COMMENT ON COLUMN "public"."req"."amount" IS '兑现的鸟币数量，大于0的整数';
 COMMENT ON COLUMN "public"."req"."state" IS '兑现状态（兑现时需要发行者确认，默认2小时响应，超时自动视为拒绝)';
 COMMENT ON COLUMN "public"."req"."closed" IS '是否已关闭交易';
-COMMENT ON TABLE "public"."req" IS 'Req 兑现请求(request)，对应req表，2小时内只能向同一用户请求一次。此表不可删除
+COMMENT ON TABLE "public"."req" IS 'Req 兑现请求(request)，对应req表，2小时内只能向同一用户请求一次（未接受的情况下）。此表不可删除
 兑现状态 state：
 10.	请求方提示：已发送兑现请求，等待对方确认（2小时内未接受将影响其鸟币信用）
    	执行方提示：收到新的兑现请求（请在2小时内确认，否则将影响鸟币信用）
@@ -407,16 +413,18 @@ COMMENT ON TABLE "public"."req" IS 'Req 兑现请求(request)，对应req表，2
 	执行方提示—血盟：收到新的血盟兑现请求（请在2小时内确认，否则将影响血盟失败次数）
 20.	请求方提示：鸟币已被成功回收（成功回收后，请求方显示3种状态："已兑现"、"兑现中(默认选中)"、"未兑现"按钮）
    	执行方提示：鸟币已回收，尚未完成兑现
-21.	请求方提示：对方拒绝了兑现请求(包括未及时处理系统自动拒绝)
-   	执行方提示：已拒绝了对方的请求，鸟币信用受到影响
-22.	请求方提示：鸟币不足
-23.	请求方提示：兑现失败（其他原因）
-24.	请求方提示：对方未兑现技能，已直接影响其鸟币信用(状态显示选中"未兑现")
+21.	请求方提示：对方拒绝了兑现请求，鸟币信用受到影响
+	执行方提示：已拒绝了对方的请求，鸟币信用受到影响
+22.   请求方提示：兑现请求超时未接受，对方鸟币信用受到影响
+	执行方提示：由于超时，系统自动拒绝了对方的请求，鸟币信用受到影响
+23.   请求方提示：对方未兑现技能，已直接影响其鸟币信用(状态显示选中"未兑现")
    	执行方提示：未兑现已影响鸟币信用，"重新兑现"即可立即恢复鸟币信用(点击"重新兑现"按钮后状态改为20"兑现中")，"关闭交易"则执行方不可进行任何操作
 31.	请求方提示：交易完成
 	执行方提示：交易完成
 32.	请求方提示：交易已关闭
-	执行方提示：交易已关闭';
+	执行方提示：交易已关闭
+33.	请求方提示：由于鸟币不足等原因，交易自动关闭
+	执行方提示：由于对方鸟币不足等原因，交易自动关闭';
 
 -- ----------------------------
 -- Table structure for skill
@@ -432,7 +440,8 @@ CREATE TABLE "public"."skill" (
   "tags" jsonb,
   "created" timestamp(6) NOT NULL,
   "updated" timestamp(6),
-  "deleted" timestamp(6)
+  "deleted" timestamp(6),
+  "version" int8 NOT NULL DEFAULT 0
 )
 ;
 ALTER TABLE "public"."skill" OWNER TO "postgres";
@@ -442,8 +451,9 @@ COMMENT ON COLUMN "public"."skill"."desc" IS '技能描述，少于10000个字�
 COMMENT ON COLUMN "public"."skill"."price" IS '技能价格（鸟币数/单位），大于0的整数，必填';
 COMMENT ON COLUMN "public"."skill"."pics" IS '技能图片大小参考config';
 COMMENT ON COLUMN "public"."skill"."tags" IS '类型如：技能、实物、服务、数字商品等，或者其他自定义标签';
+COMMENT ON COLUMN "public"."skill"."version" IS '更新时自动加1';
 COMMENT ON TABLE "public"."skill" IS 'Skill 最新技能（指自身天赋和任何对他人有用的东西），此表不可删除
-注意：发币是使用技能快照，而不是最新技能。';
+注意：发币是使用技能快照，而不是最新技能，每次更新skill后，在发币的时候就需要新建snap。';
 
 -- ----------------------------
 -- Table structure for snap
@@ -458,7 +468,8 @@ CREATE TABLE "public"."snap" (
   "pics" jsonb,
   "created" timestamp(6) NOT NULL,
   "tags" jsonb,
-  "skill_id" int8 NOT NULL
+  "skill_id" int8 NOT NULL,
+  "version" int8 NOT NULL DEFAULT 1
 )
 ;
 ALTER TABLE "public"."snap" OWNER TO "postgres";
@@ -469,6 +480,7 @@ COMMENT ON COLUMN "public"."snap"."price" IS '技能价格（鸟币数/单位）
 COMMENT ON COLUMN "public"."snap"."pics" IS '技能图片大小参考config';
 COMMENT ON COLUMN "public"."snap"."tags" IS '类型如：技能、实物、服务、数字商品等，或者其他自定义标签';
 COMMENT ON COLUMN "public"."snap"."skill_id" IS '不同备份版本的技能的共同ID';
+COMMENT ON COLUMN "public"."snap"."version" IS '同技能表的version';
 COMMENT ON TABLE "public"."snap" IS '技能快照，对应snap表。此表只可新建，不可删改。';
 
 -- ----------------------------
@@ -489,7 +501,7 @@ ALTER TABLE "public"."snap_set" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."snap_set"."owner" IS '鸟币号，必填';
 COMMENT ON COLUMN "public"."snap_set"."count" IS '此set的技能总数量，正整数';
 COMMENT ON COLUMN "public"."snap_set"."value" IS '此set的技能总价值，正整数 ';
-COMMENT ON COLUMN "public"."snap_set"."snap_ids" IS '技能快照snap_id的集合，倒序排列(snap_id为自增id)，如：[{"snap_id":"xxxx"},{"snap_id":"xxxx"}]';
+COMMENT ON COLUMN "public"."snap_set"."snap_ids" IS '技能快照snap_id的集合，倒序排列(snap_id为自增id)';
 COMMENT ON COLUMN "public"."snap_set"."md5" IS 'snap_ids的snap按照version倒序排列后，生成的md5 hash。用于检查是否已经存在此技能快照组';
 COMMENT ON TABLE "public"."snap_set" IS '技能快照组，对应snap_set表，标识了鸟币不同版本。此表只可新建，不可删改。';
 
@@ -512,8 +524,8 @@ COMMENT ON COLUMN "public"."sub_sum"."bearer" IS '持有者的鸟币号';
 COMMENT ON COLUMN "public"."sub_sum"."coin" IS '持有的鸟币名称';
 COMMENT ON COLUMN "public"."sub_sum"."snap_set_id" IS '鸟币版本号';
 COMMENT ON COLUMN "public"."sub_sum"."sum" IS '收入sum+正数，支出sum+负数';
-COMMENT ON COLUMN "public"."sub_sum"."snap_ids" IS 'SnapSetID下的技能快照snap_id的集合，倒序排列(snap_id为自增id)，如：[{"snap_id":"xxxx"},{"snap_id":"xxxx"}] 
-冗余字段，方便查询';
+COMMENT ON COLUMN "public"."sub_sum"."snap_ids" IS 'SnapSetID下的技能快照snap_id的集合，倒序排列(snap_id为自增id)
+冗余字段，方便查询，gin索引';
 COMMENT ON TABLE "public"."sub_sum" IS '不同版本的鸟币持有量(注意版本是以snap_set_id来划分的)，对应sub_sum表。此表不可删除';
 
 -- ----------------------------
@@ -542,23 +554,23 @@ COMMENT ON TABLE "public"."sum" IS '鸟币持有量，对应sum表。此表不�
 SELECT setval('"public"."coin_id_seq"', 36, true);
 SELECT setval('"public"."fulfil_id_seq"', 3, false);
 SELECT setval('"public"."info_id_seq"', 6, true);
-SELECT setval('"public"."news_id_seq"', 315, true);
+SELECT setval('"public"."news_id_seq"', 383, true);
 ALTER SEQUENCE "public"."news_id_seq1"
 OWNED BY "public"."news"."id";
 SELECT setval('"public"."news_id_seq1"', 2, false);
-SELECT setval('"public"."pay_id_seq"', 137, true);
+SELECT setval('"public"."pay_id_seq"', 150, true);
 SELECT setval('"public"."pic_id_seq"', 2, false);
 ALTER SEQUENCE "public"."repay_id_seq"
 OWNED BY "public"."repay"."id";
-SELECT setval('"public"."repay_id_seq"', 2, true);
-SELECT setval('"public"."req_id_seq"', 38, true);
-SELECT setval('"public"."skill_id_seq"', 111, true);
-SELECT setval('"public"."snap_id_seq"', 23, true);
-SELECT setval('"public"."snap_set_id_seq"', 22, true);
+SELECT setval('"public"."repay_id_seq"', 17, true);
+SELECT setval('"public"."req_id_seq"', 49, true);
+SELECT setval('"public"."skill_id_seq"', 117, true);
+SELECT setval('"public"."snap_id_seq"', 29, true);
+SELECT setval('"public"."snap_set_id_seq"', 27, true);
 ALTER SEQUENCE "public"."sub_sum_id_seq"
 OWNED BY "public"."sub_sum"."id";
-SELECT setval('"public"."sub_sum_id_seq"', 42, true);
-SELECT setval('"public"."sum_id_seq"', 14, true);
+SELECT setval('"public"."sub_sum_id_seq"', 52, true);
+SELECT setval('"public"."sum_id_seq"', 16, true);
 SELECT setval('"public"."trans_id_seq"', 3, false);
 SELECT setval('"public"."user_id_seq"', 30, true);
 
@@ -641,7 +653,7 @@ ALTER TABLE "public"."img" ADD CONSTRAINT "img_thumb_check" CHECK ((thumb <> '{}
 -- Rules structure for table img
 -- ----------------------------
 CREATE RULE "rule_img_update" AS ON UPDATE TO "public"."img" DO INSTEAD NOTHING;;
-CREATE RULE "rule_img_delete" AS ON UPDATE TO "public"."img" DO INSTEAD NOTHING;;
+CREATE RULE "rule_img_delete" AS ON DELETE TO "public"."img" DO INSTEAD NOTHING;;
 COMMENT ON RULE "rule_img_update" ON "public"."img" IS '此表只可新增，不可删改';
 COMMENT ON RULE "rule_img_delete" ON "public"."img" IS '此表只可新增，不可删改';
 
@@ -649,6 +661,12 @@ COMMENT ON RULE "rule_img_delete" ON "public"."img" IS '此表只可新增，不
 -- Primary Key structure for table img
 -- ----------------------------
 ALTER TABLE "public"."img" ADD CONSTRAINT "img_pkey" PRIMARY KEY ("hash");
+
+-- ----------------------------
+-- Rules structure for table info
+-- ----------------------------
+CREATE RULE "rule_info_delete" AS ON DELETE TO "public"."info" DO INSTEAD NOTHING;;
+COMMENT ON RULE "rule_info_delete" ON "public"."info" IS '此表不可刪除';
 
 -- ----------------------------
 -- Primary Key structure for table info
@@ -717,6 +735,7 @@ ALTER TABLE "public"."pay" ADD CONSTRAINT "pay_amount_check" CHECK ((amount >= 1
 -- ----------------------------
 CREATE RULE "rule_trans_update" AS ON UPDATE TO "public"."pay" DO INSTEAD NOTHING;;
 CREATE RULE "rule_trans_delete" AS ON DELETE TO "public"."pay" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."pay" DISABLE RULE "rule_trans_delete";
 COMMENT ON RULE "rule_trans_update" ON "public"."pay" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_trans_delete" ON "public"."pay" IS '此表只可新建，不可删改。';
 
@@ -735,11 +754,20 @@ CREATE INDEX "repay_bearer_issuer_idx" ON "public"."repay" USING btree (
   "bearer" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST,
   "issuer" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
+CREATE INDEX "repay_guid_idx" ON "public"."repay" USING btree (
+  "guid" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
 CREATE INDEX "repay_issuer_idx" ON "public"."repay" USING btree (
   "issuer" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
+CREATE INDEX "repay_req_id_idx" ON "public"."repay" USING btree (
+  "req_id" "pg_catalog"."int8_ops" ASC NULLS LAST
+);
 CREATE INDEX "repay_skill_id_idx" ON "public"."repay" USING btree (
   "snap_id" "pg_catalog"."int8_ops" ASC NULLS LAST
+);
+CREATE INDEX "repay_snap_set_id_idx" ON "public"."repay" USING btree (
+  "snap_set_id" "pg_catalog"."int8_ops" ASC NULLS LAST
 );
 
 -- ----------------------------
@@ -752,6 +780,7 @@ ALTER TABLE "public"."repay" ADD CONSTRAINT "repay_amount_check" CHECK ((amount 
 -- ----------------------------
 CREATE RULE "rule_repay_update" AS ON UPDATE TO "public"."repay" DO INSTEAD NOTHING;;
 CREATE RULE "rule_repay_delete" AS ON DELETE TO "public"."repay" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."repay" DISABLE RULE "rule_repay_delete";
 COMMENT ON RULE "rule_repay_update" ON "public"."repay" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_repay_delete" ON "public"."repay" IS '此表只可新建，不可删改。';
 
@@ -796,6 +825,7 @@ ALTER TABLE "public"."req" ADD CONSTRAINT "req_amount_check" CHECK ((amount >= 1
 -- Rules structure for table req
 -- ----------------------------
 CREATE RULE "rule_req_delete" AS ON DELETE TO "public"."req" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."req" DISABLE RULE "rule_req_delete";
 COMMENT ON RULE "rule_req_delete" ON "public"."req" IS '此表不可删除';
 
 -- ----------------------------
@@ -844,6 +874,7 @@ ALTER TABLE "public"."skill" ADD CONSTRAINT "skill_price_check" CHECK ((price >=
 -- Rules structure for table skill
 -- ----------------------------
 CREATE RULE "skill_sum_delete" AS ON DELETE TO "public"."skill" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."skill" DISABLE RULE "skill_sum_delete";
 COMMENT ON RULE "skill_sum_delete" ON "public"."skill" IS '此表不可删除';
 
 -- ----------------------------
@@ -886,6 +917,7 @@ ALTER TABLE "public"."snap" ADD CONSTRAINT "snap_price_check" CHECK ((price >= 1
 -- ----------------------------
 CREATE RULE "rule_snap_update" AS ON UPDATE TO "public"."snap" DO INSTEAD NOTHING;;
 CREATE RULE "rule_snap_delete" AS ON DELETE TO "public"."snap" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."snap" DISABLE RULE "rule_snap_delete";
 COMMENT ON RULE "rule_snap_update" ON "public"."snap" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_snap_delete" ON "public"."snap" IS '此表只可新建，不可删改。';
 
@@ -917,6 +949,7 @@ ALTER TABLE "public"."snap_set" ADD CONSTRAINT "skill_set_price_check" CHECK ((p
 -- ----------------------------
 CREATE RULE "rule_ss_update" AS ON UPDATE TO "public"."snap_set" DO INSTEAD NOTHING;;
 CREATE RULE "rule_ss_delete" AS ON DELETE TO "public"."snap_set" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."snap_set" DISABLE RULE "rule_ss_delete";
 COMMENT ON RULE "rule_ss_update" ON "public"."snap_set" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_ss_delete" ON "public"."snap_set" IS '此表只可新建，不可删改。';
 
@@ -939,6 +972,16 @@ CREATE INDEX "sub_sum_bearer_idx" ON "public"."sub_sum" USING btree (
 CREATE INDEX "sub_sum_coin_idx" ON "public"."sub_sum" USING btree (
   "coin" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
+CREATE INDEX "sub_sum_snap_ids_idx" ON "public"."sub_sum" USING gin (
+  "snap_ids" "pg_catalog"."jsonb_ops"
+);
+
+-- ----------------------------
+-- Rules structure for table sub_sum
+-- ----------------------------
+CREATE RULE "rule_subsum_delete" AS ON DELETE TO "public"."sub_sum" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."sub_sum" DISABLE RULE "rule_subsum_delete";
+COMMENT ON RULE "rule_subsum_delete" ON "public"."sub_sum" IS '此表不可删除';
 
 -- ----------------------------
 -- Primary Key structure for table sub_sum
@@ -970,6 +1013,7 @@ CREATE INDEX "sum_sum_idx" ON "public"."sum" USING btree (
 -- Rules structure for table sum
 -- ----------------------------
 CREATE RULE "rule_sum_delete" AS ON DELETE TO "public"."sum" DO INSTEAD NOTHING;;
+ALTER TABLE "public"."sum" DISABLE RULE "rule_sum_delete";
 COMMENT ON RULE "rule_sum_delete" ON "public"."sum" IS '此表不可删除';
 
 -- ----------------------------

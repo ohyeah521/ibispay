@@ -11,7 +11,7 @@ import (
 
 	"github.com/gogf/gf/os/gtimer"
 
-	"github.com/kr/beanstalk"
+	"github.com/beanstalkd/go-beanstalk"
 
 	"github.com/go-xorm/xorm"
 	"github.com/iris-contrib/middleware/jwt"
@@ -237,13 +237,15 @@ func (jobRMBExr) Run() {
 
 //超时未接受的兑现请求处理
 func jobReqCheck() {
-	conn, _ := beanstalk.Dial("tcp", config.BeanstalkURI)
-	tubeSet := beanstalk.NewTubeSet(conn, config.BeanstalkTubeReq)
-	//每隔10毫秒循环一次，一分钟可以响应6000条兑现请求
+	//每隔10毫秒循环一次，一分钟可以查询6000条数据，记录读取超时时间为200毫秒
 	interval := 10 * time.Millisecond
+	timeOut := 200 * time.Millisecond
 	gtimer.Add(interval, func() {
-		jobID, body, err := tubeSet.Reserve(0)
+		conn, _ := beanstalk.Dial("tcp", config.BeanstalkURI)
+		tubeSet := beanstalk.NewTubeSet(conn, config.BeanstalkTubeReq)
+		jobID, body, err := tubeSet.Reserve(timeOut)
 		if err != nil {
+			conn.Close()
 			return
 		}
 
@@ -251,6 +253,7 @@ func jobReqCheck() {
 		err = json.Unmarshal(body, &req)
 		if err != nil {
 			conn.Delete(jobID)
+			conn.Close()
 			return
 		}
 
@@ -258,6 +261,7 @@ func jobReqCheck() {
 		pq.ID(req.ID).Cols("state").Get(&reqNow)
 		if reqNow.State != 10 {
 			conn.Delete(jobID)
+			conn.Close()
 			return
 		}
 
@@ -268,5 +272,6 @@ func jobReqCheck() {
 		pq.ID(req.ID).Update(&db.Req{State: 22})
 
 		conn.Delete(jobID)
+		conn.Close()
 	})
 }
