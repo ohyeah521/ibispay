@@ -9,11 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogf/gf/os/gtimer"
-
 	"github.com/beanstalkd/go-beanstalk"
-
 	"github.com/go-xorm/xorm"
+	"github.com/gogf/gf/os/gtimer"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/hero"
@@ -108,9 +106,9 @@ func main() {
 		skill.Use(jwtHandler.Serve)
 		{
 			skill.Post("/new", picsSizeHandler, transHandler, hero.Handler(controller.NewSkill)) //添加技能
-			// skill.Put("/update")
-			//todo 修改技能(transHandler)
-			//todo 添加索引，搜索技能
+			skill.Put("/update", transHandler, hero.Handler(controller.UpdateSkill))             //更新技能
+			//todo 下架技能(transHandler)
+			//todo 搜索技能，添加索引
 		}
 	}
 
@@ -245,7 +243,7 @@ func jobReqCheck() {
 		tubeSet := beanstalk.NewTubeSet(conn, config.BeanstalkTubeReq)
 		jobID, body, err := tubeSet.Reserve(timeOut)
 		if err != nil {
-			conn.Close()
+			defer conn.Close()
 			return
 		}
 
@@ -253,7 +251,7 @@ func jobReqCheck() {
 		err = json.Unmarshal(body, &req)
 		if err != nil {
 			conn.Delete(jobID)
-			conn.Close()
+			defer conn.Close()
 			return
 		}
 
@@ -261,7 +259,7 @@ func jobReqCheck() {
 		pq.ID(req.ID).Cols("state").Get(&reqNow)
 		if reqNow.State != 10 {
 			conn.Delete(jobID)
-			conn.Close()
+			defer conn.Close()
 			return
 		}
 
@@ -272,6 +270,6 @@ func jobReqCheck() {
 		pq.ID(req.ID).Update(&db.Req{State: 22})
 
 		conn.Delete(jobID)
-		conn.Close()
+		defer conn.Close()
 	})
 }

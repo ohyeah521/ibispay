@@ -12,7 +12,7 @@
  Target Server Version : 110005
  File Encoding         : 65001
 
- Date: 30/12/2019 16:34:10
+ Date: 04/01/2020 00:22:30
 */
 
 
@@ -434,7 +434,7 @@ CREATE TABLE "public"."skill" (
   "id" int8 NOT NULL DEFAULT nextval('skill_id_seq'::regclass),
   "owner" varchar(20) COLLATE "pg_catalog"."default" NOT NULL,
   "title" varchar(100) COLLATE "pg_catalog"."default" NOT NULL,
-  "desc" varchar(10000) COLLATE "pg_catalog"."default",
+  "desc" varchar(1000) COLLATE "pg_catalog"."default",
   "price" int8 NOT NULL DEFAULT 1,
   "pics" jsonb,
   "tags" jsonb,
@@ -447,7 +447,7 @@ CREATE TABLE "public"."skill" (
 ALTER TABLE "public"."skill" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."skill"."owner" IS '鸟币号，必填';
 COMMENT ON COLUMN "public"."skill"."title" IS '技能名称，不可修改，同一用户下不能输入重复标题，不超过100个字符，必填';
-COMMENT ON COLUMN "public"."skill"."desc" IS '技能描述，少于10000个字符';
+COMMENT ON COLUMN "public"."skill"."desc" IS '技能描述，少于1000个字符';
 COMMENT ON COLUMN "public"."skill"."price" IS '技能价格（鸟币数/单位），大于0的整数，必填';
 COMMENT ON COLUMN "public"."skill"."pics" IS '技能图片大小参考config';
 COMMENT ON COLUMN "public"."skill"."tags" IS '类型如：技能、实物、服务、数字商品等，或者其他自定义标签';
@@ -554,7 +554,7 @@ COMMENT ON TABLE "public"."sum" IS '鸟币持有量，对应sum表。此表不�
 SELECT setval('"public"."coin_id_seq"', 36, true);
 SELECT setval('"public"."fulfil_id_seq"', 3, false);
 SELECT setval('"public"."info_id_seq"', 6, true);
-SELECT setval('"public"."news_id_seq"', 383, true);
+SELECT setval('"public"."news_id_seq"', 387, true);
 ALTER SEQUENCE "public"."news_id_seq1"
 OWNED BY "public"."news"."id";
 SELECT setval('"public"."news_id_seq1"', 2, false);
@@ -563,7 +563,7 @@ SELECT setval('"public"."pic_id_seq"', 2, false);
 ALTER SEQUENCE "public"."repay_id_seq"
 OWNED BY "public"."repay"."id";
 SELECT setval('"public"."repay_id_seq"', 17, true);
-SELECT setval('"public"."req_id_seq"', 49, true);
+SELECT setval('"public"."req_id_seq"', 50, true);
 SELECT setval('"public"."skill_id_seq"', 117, true);
 SELECT setval('"public"."snap_id_seq"', 29, true);
 SELECT setval('"public"."snap_set_id_seq"', 27, true);
@@ -841,6 +841,10 @@ CREATE INDEX "skill_created_idx" ON "public"."skill" USING btree (
 );
 CREATE INDEX "skill_desc_idx" ON "public"."skill" USING btree (
   "desc" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE UNIQUE INDEX "skill_id_owner_idx" ON "public"."skill" USING btree (
+  "id" "pg_catalog"."int8_ops" ASC NULLS LAST,
+  "owner" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 CREATE INDEX "skill_owner_idx" ON "public"."skill" USING btree (
   "owner" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST

@@ -12,16 +12,16 @@ type NewPayForm struct {
 type NewReqForm struct {
 	Issuer   string `json:"issuer" validate:"required,lte=20" format:"trim"`            //发币者鸟币号(鸟币号即要兑现的鸟币)
 	Amount   uint64 `json:"amount" validate:"required,numeric,gte=1" format:"num,trim"` //转账数额，大于0的整数
-	SnapID   uint64 `json:"snapID" validate:"numeric" format:"trim"`                    //实际兑现的技能ID
+	SnapID   uint64 `json:"snapID" validate:"numeric" format:"num,trim"`                //实际兑现的技能ID
 	IsMarker bool   `json:"isMarker"`                                                   //是否是血盟，血盟为true时，忽略技能快照snap_id
 }
 
 //NewRepayForm 兑现
 type NewRepayForm struct {
-	ReqID    uint64 `json:"reqID" validate:"required" format:"num,trim"`                //兑现请求ID
+	ReqID    uint64 `json:"reqID" validate:"required,numeric" format:"num,trim"`        //兑现请求ID
 	Bearer   string `json:"bearer" validate:"required,lte=20" format:"trim"`            //发币者鸟币号(鸟币号即要兑现的鸟币)
 	Amount   uint64 `json:"amount" validate:"required,numeric,gte=1" format:"num,trim"` //转账数额，大于0的整数
-	SnapID   uint64 `json:"snapID" validate:"numeric" format:"trim"`                    //实际兑现的技能ID
+	SnapID   uint64 `json:"snapID" validate:"numeric" format:"num,trim"`                //实际兑现的技能ID
 	IsMarker bool   `json:"isMarker"`                                                   //是否是血盟，血盟为true时，忽略技能快照snap_id
 }
 

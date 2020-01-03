@@ -27,10 +27,14 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
 	lock := GetTxLocks(ctx)
 
-	//转账时不可操作技能
+	//转账和技能不能同时处理
 	if lock.Locks[coinName] == true {
 		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1019)
 	}
+	lock.Locks[coinName] = true
+	defer func() {
+		delete(lock.Locks, coinName)
+	}()
 
 	//上架的技能数量不能超过200
 	count, err := pq.Count(&db.Skill{Owner: coinName})
@@ -56,6 +60,9 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 	}
 
 	files := ctx.Request().MultipartForm.File["files"]
+	if len(files) > 9 {
+		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1036)
+	}
 	imgs := []*db.Img{}
 	conf := config.Public.Pic
 	for _, file := range files {
@@ -338,4 +345,50 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 			delOnErr()
 		}
 	}(pq, imgs, coinName, &skill)
+}
+
+//UpdateSkill 更新技能
+//更新技能时，拖放图片直接上传，服务器返回图片hash值给前端，请求时仅带上图片的hash数组
+func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
+	e := new(model.CommonError)
+	pq := GetPQ(ctx)
+	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
+	lock := GetTxLocks(ctx)
+
+	//转账和技能不能同时处理
+	if lock.Locks[coinName] == true {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1019)
+	}
+	lock.Locks[coinName] = true
+	defer func() {
+		delete(lock.Locks, coinName)
+	}()
+
+	//检查是否是本人账号更新
+	has, err := pq.Exist(&db.Skill{ID: form.SkillID, Owner: coinName})
+	if err != nil {
+		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
+	}
+	if has == false {
+		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1037)
+	}
+
+	pics := []*db.Pic{}
+	if len(form.Pics) > 0 {
+		for _, imgHash := range form.Pics {
+			img := db.Img{Hash: imgHash}
+			has, err := pq.Get(&img)
+			if err != nil || has == false {
+				continue
+			}
+			pics = append(pics, img.Thumb)
+		}
+	}
+	skill := db.Skill{Price: form.Price, Desc: form.Desc, Tags: form.Tags, Pics: pics}
+	affected, err := pq.ID(form.SkillID).Cols("price,desc,tags,pics").Update(&skill)
+	if affected == 0 || err != nil {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1004)
+	}
+
+	ctx.JSON(&model.UpdateRes{Ok: true})
 }

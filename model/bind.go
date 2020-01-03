@@ -35,6 +35,7 @@ func BindForm() {
 	newProfie()
 	//skill
 	newSkill()
+	updateSkill()
 	//trans
 	newPay()
 	newReq()
@@ -72,6 +73,13 @@ func newProfie() {
 func newSkill() {
 	hero.Register(func(ctx iris.Context) (form NewSkillForm) {
 		handleForm(ctx, &form, form.NewSkillFieldTrans())
+		return
+	})
+}
+
+func updateSkill() {
+	hero.Register(func(ctx iris.Context) (form UpdateSkillForm) {
+		handleJSON(ctx, &form, form.UpdateSkillFieldTrans())
 		return
 	})
 }
