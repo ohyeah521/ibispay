@@ -93,11 +93,19 @@ func main() {
 		{
 			coin.Put("/updateProfile", hero.Handler(controller.UpdateProfile))             //修改个人资料
 			coin.Put("/updatePwd", hero.Handler(controller.UpdatePwd))                     //修改密码
-			coin.Put("/updateAvatar", avatarHandler, controller.UpdateAvatar)              //修改头像
+			coin.Put("/updateAvatar", picSizeHandler, controller.UpdateAvatar)             //修改头像
 			coin.Get("/profile/{name:string range(1,20) else 400}", controller.GetProfile) //获取某用户资料
 			coin.Get("/info", exrHandler, controller.GetMyActivity)                        //获取自己的动态
 			//todo 找回密码
 			//todo dashboard控制台，展示交易和鸟币等信息
+		}
+	}
+
+	img := app.Party("img")
+	{
+		img.Use(jwtHandler.Serve)
+		{
+			img.Post("/new", picSizeHandler, hero.Handler(controller.NewPic)) //添加图片
 		}
 	}
 
@@ -158,8 +166,8 @@ func transHandler(ctx iris.Context) {
 	ctx.Next()
 }
 
-//检查头像大小
-func avatarHandler(ctx iris.Context) {
+//检查单张图片大小
+func picSizeHandler(ctx iris.Context) {
 	if ctx.GetContentLength() > config.Public.Pic.MaxUploadPic {
 		ctx.StatusCode(iris.StatusRequestEntityTooLarge)
 		return

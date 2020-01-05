@@ -135,6 +135,63 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 	if len(imgs) == 0 {
 		return
 	}
+	GenThumbnails(pq, imgs, coinName, &skill)
+}
+
+//UpdateSkill 更新技能
+//更新技能时，拖放图片直接上传，服务器返回图片hash值给前端，请求时仅带上图片的hash数组
+func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
+	e := new(model.CommonError)
+	pq := GetPQ(ctx)
+	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
+	lock := GetTxLocks(ctx)
+
+	//转账和技能不能同时处理
+	if lock.Locks[coinName] == true {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1019)
+	}
+	lock.Locks[coinName] = true
+	defer func() {
+		delete(lock.Locks, coinName)
+	}()
+
+	//检查是否是本人账号更新
+	has, err := pq.Exist(&db.Skill{ID: form.SkillID, Owner: coinName})
+	if err != nil {
+		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
+	}
+	if has == false {
+		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1037)
+	}
+
+	pics := []*db.Pic{}
+	if len(form.Pics) > 0 {
+		for _, imgHash := range form.Pics {
+			img := db.Img{Hash: imgHash}
+			has, err := pq.Get(&img)
+			if err != nil || has == false {
+				continue
+			}
+			pics = append(pics, img.Thumb)
+		}
+	}
+	skill := db.Skill{Price: form.Price, Desc: form.Desc, Tags: form.Tags, Pics: pics}
+	affected, err := pq.ID(form.SkillID).Cols("price,desc,tags,pics").Update(&skill)
+	if affected == 0 || err != nil {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1004)
+	}
+
+	ctx.JSON(&model.UpdateRes{Ok: true})
+}
+
+//GenThumbnail 生成单张图片的缩略图
+func GenThumbnail(pq *xorm.Engine, img *db.Img, coinName string) {
+	images := []*db.Img{img}
+	GenThumbnails(pq, images, coinName, nil)
+}
+
+//GenThumbnails 生成多张图片的缩略图，并且更新到技能
+func GenThumbnails(pq *xorm.Engine, imgs []*db.Img, coinName string, skill *db.Skill) {
 	//生成图片缩略图，并且更新对应字段
 	go func(pq *xorm.Engine, images []*db.Img, coinName string, skill *db.Skill) {
 		pics := []*db.Pic{}
@@ -338,57 +395,13 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 			}
 		}
 
-		//更新skill缩略图
-		skill.Pics = pics
-		affected, err := pq.ID(skill.ID).Update(skill)
-		if affected == 0 || err != nil {
-			delOnErr()
-		}
-	}(pq, imgs, coinName, &skill)
-}
-
-//UpdateSkill 更新技能
-//更新技能时，拖放图片直接上传，服务器返回图片hash值给前端，请求时仅带上图片的hash数组
-func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
-	e := new(model.CommonError)
-	pq := GetPQ(ctx)
-	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
-	lock := GetTxLocks(ctx)
-
-	//转账和技能不能同时处理
-	if lock.Locks[coinName] == true {
-		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1019)
-	}
-	lock.Locks[coinName] = true
-	defer func() {
-		delete(lock.Locks, coinName)
-	}()
-
-	//检查是否是本人账号更新
-	has, err := pq.Exist(&db.Skill{ID: form.SkillID, Owner: coinName})
-	if err != nil {
-		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
-	}
-	if has == false {
-		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1037)
-	}
-
-	pics := []*db.Pic{}
-	if len(form.Pics) > 0 {
-		for _, imgHash := range form.Pics {
-			img := db.Img{Hash: imgHash}
-			has, err := pq.Get(&img)
-			if err != nil || has == false {
-				continue
+		if skill != nil {
+			//更新skill缩略图
+			skill.Pics = pics
+			affected, err := pq.ID(skill.ID).Update(skill)
+			if affected == 0 || err != nil {
+				delOnErr()
 			}
-			pics = append(pics, img.Thumb)
 		}
-	}
-	skill := db.Skill{Price: form.Price, Desc: form.Desc, Tags: form.Tags, Pics: pics}
-	affected, err := pq.ID(form.SkillID).Cols("price,desc,tags,pics").Update(&skill)
-	if affected == 0 || err != nil {
-		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1004)
-	}
-
-	ctx.JSON(&model.UpdateRes{Ok: true})
+	}(pq, imgs, coinName, skill)
 }
