@@ -12,7 +12,7 @@
  Target Server Version : 110005
  File Encoding         : 65001
 
- Date: 04/01/2020 00:22:30
+ Date: 06/01/2020 18:24:11
 */
 
 
@@ -441,7 +441,7 @@ CREATE TABLE "public"."skill" (
   "created" timestamp(6) NOT NULL,
   "updated" timestamp(6),
   "deleted" timestamp(6),
-  "version" int8 NOT NULL DEFAULT 0
+  "version" int8 NOT NULL DEFAULT 1
 )
 ;
 ALTER TABLE "public"."skill" OWNER TO "postgres";
@@ -735,7 +735,6 @@ ALTER TABLE "public"."pay" ADD CONSTRAINT "pay_amount_check" CHECK ((amount >= 1
 -- ----------------------------
 CREATE RULE "rule_trans_update" AS ON UPDATE TO "public"."pay" DO INSTEAD NOTHING;;
 CREATE RULE "rule_trans_delete" AS ON DELETE TO "public"."pay" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."pay" DISABLE RULE "rule_trans_delete";
 COMMENT ON RULE "rule_trans_update" ON "public"."pay" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_trans_delete" ON "public"."pay" IS '此表只可新建，不可删改。';
 
@@ -780,7 +779,6 @@ ALTER TABLE "public"."repay" ADD CONSTRAINT "repay_amount_check" CHECK ((amount 
 -- ----------------------------
 CREATE RULE "rule_repay_update" AS ON UPDATE TO "public"."repay" DO INSTEAD NOTHING;;
 CREATE RULE "rule_repay_delete" AS ON DELETE TO "public"."repay" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."repay" DISABLE RULE "rule_repay_delete";
 COMMENT ON RULE "rule_repay_update" ON "public"."repay" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_repay_delete" ON "public"."repay" IS '此表只可新建，不可删改。';
 
@@ -825,7 +823,6 @@ ALTER TABLE "public"."req" ADD CONSTRAINT "req_amount_check" CHECK ((amount >= 1
 -- Rules structure for table req
 -- ----------------------------
 CREATE RULE "rule_req_delete" AS ON DELETE TO "public"."req" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."req" DISABLE RULE "rule_req_delete";
 COMMENT ON RULE "rule_req_delete" ON "public"."req" IS '此表不可删除';
 
 -- ----------------------------
@@ -878,7 +875,6 @@ ALTER TABLE "public"."skill" ADD CONSTRAINT "skill_price_check" CHECK ((price >=
 -- Rules structure for table skill
 -- ----------------------------
 CREATE RULE "skill_sum_delete" AS ON DELETE TO "public"."skill" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."skill" DISABLE RULE "skill_sum_delete";
 COMMENT ON RULE "skill_sum_delete" ON "public"."skill" IS '此表不可删除';
 
 -- ----------------------------
@@ -921,7 +917,6 @@ ALTER TABLE "public"."snap" ADD CONSTRAINT "snap_price_check" CHECK ((price >= 1
 -- ----------------------------
 CREATE RULE "rule_snap_update" AS ON UPDATE TO "public"."snap" DO INSTEAD NOTHING;;
 CREATE RULE "rule_snap_delete" AS ON DELETE TO "public"."snap" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."snap" DISABLE RULE "rule_snap_delete";
 COMMENT ON RULE "rule_snap_update" ON "public"."snap" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_snap_delete" ON "public"."snap" IS '此表只可新建，不可删改。';
 
@@ -953,7 +948,6 @@ ALTER TABLE "public"."snap_set" ADD CONSTRAINT "skill_set_price_check" CHECK ((p
 -- ----------------------------
 CREATE RULE "rule_ss_update" AS ON UPDATE TO "public"."snap_set" DO INSTEAD NOTHING;;
 CREATE RULE "rule_ss_delete" AS ON DELETE TO "public"."snap_set" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."snap_set" DISABLE RULE "rule_ss_delete";
 COMMENT ON RULE "rule_ss_update" ON "public"."snap_set" IS '此表只可新建，不可删改。';
 COMMENT ON RULE "rule_ss_delete" ON "public"."snap_set" IS '此表只可新建，不可删改。';
 
@@ -984,7 +978,6 @@ CREATE INDEX "sub_sum_snap_ids_idx" ON "public"."sub_sum" USING gin (
 -- Rules structure for table sub_sum
 -- ----------------------------
 CREATE RULE "rule_subsum_delete" AS ON DELETE TO "public"."sub_sum" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."sub_sum" DISABLE RULE "rule_subsum_delete";
 COMMENT ON RULE "rule_subsum_delete" ON "public"."sub_sum" IS '此表不可删除';
 
 -- ----------------------------
@@ -1017,7 +1010,6 @@ CREATE INDEX "sum_sum_idx" ON "public"."sum" USING btree (
 -- Rules structure for table sum
 -- ----------------------------
 CREATE RULE "rule_sum_delete" AS ON DELETE TO "public"."sum" DO INSTEAD NOTHING;;
-ALTER TABLE "public"."sum" DISABLE RULE "rule_sum_delete";
 COMMENT ON RULE "rule_sum_delete" ON "public"."sum" IS '此表不可删除';
 
 -- ----------------------------
