@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
+
+	"golang.org/x/crypto/blake2b"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/go-xorm/xorm"
@@ -72,12 +72,11 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 			continue
 		}
 		defer f.Close()
-		hash := md5.New()
+		hash, err := blake2b.New256(nil)
 		if _, err := io.Copy(hash, f); err != nil {
 			continue
 		}
-		sumByte := hash.Sum(nil)
-		sum := hex.EncodeToString(sumByte)
+		sum := hex.EncodeToString(hash.Sum(nil))
 
 		//检查图片hash是否已经存在于数据库
 		img := db.Img{Hash: sum}
@@ -88,22 +87,15 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 		}
 		if has == false {
 			//新的client_hash
+			guid := xid.New().String()
 			img.Owner = coinName
-			img.GUID = xid.New().String()
+			img.GUID = guid
 			//临时保存原图到路径：./files/udata/鸟币号/pic/鸟币号_guid-original.jpg
-			pid := coinName + "_" + img.GUID
+			pid := coinName + "_" + guid
 			meta := db.NewJPGMeta(pid+conf.PicNameSuffixOriginal, 0, 0)
 			dirOriginal := db.GetUserPicDir(coinName, meta)
-			f, err := file.Open()
+			_, err = util.SaveFileTo(file, dirOriginal)
 			if err != nil {
-				continue
-			}
-			defer f.Close()
-			fileBuf, err := ioutil.ReadAll(f)
-			if err != nil {
-				continue
-			}
-			if ioutil.WriteFile(dirOriginal, fileBuf, os.ModePerm) != nil {
 				continue
 			}
 			img.OriginalDir = dirOriginal
@@ -213,16 +205,14 @@ func GenThumbnails(pq *xorm.Engine, imgs []*db.Img, coinName string, skill *db.S
 
 				//-----获取图片宽高信息-----
 				util.LogDebug(img.OriginalDir)
-				buf, err := bimg.Read(img.OriginalDir)
+
+				file, err := os.Open(img.OriginalDir)
 				if delPic(err) {
 					continue
 				}
-				size, err := bimg.NewImage(buf).Size()
-				if delPic(err) {
-					continue
-				}
-				w := int(size.Width)
-				h := int(size.Height)
+				defer file.Close()
+
+				w, h := util.GetPicDimensions(file)
 
 				//-------计算缩略图大小，并把数据写入数组----------
 				var getNewWH = func(w int, h int, longer float64, shorter float64, configSize float64) (newW uint, newH uint) {
@@ -255,6 +245,8 @@ func GenThumbnails(pq *xorm.Engine, imgs []*db.Img, coinName string, skill *db.S
 					delPic(errors.New(config.Public.Err.E1017))
 					continue
 				}
+
+				//注意：bimg默认的内存缓存是100M
 				buffer, err := bimg.Read(img.OriginalDir)
 				if (longer-shorter)/longer < 0.5 {
 					//正常比例图，以长边对准设定值

@@ -1,10 +1,6 @@
 package controller
 
 import (
-	"crypto/md5"
-	"encoding/hex"
-	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/kataras/iris"
@@ -21,46 +17,46 @@ func NewPic(ctx iris.Context) {
 	pq := GetPQ(ctx)
 	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
 
-	file, _, err := ctx.FormFile("file")
+	_, header, err := ctx.FormFile("file")
 	if err != nil {
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
-	defer file.Close()
 
-	//取得hash值
-	hash := md5.New()
-	if _, err := io.Copy(hash, file); err != nil {
+	//临时保存原图到路径：./files/udata/鸟币号/pic/鸟币号_guid-original.jpg
+	guid := xid.New().String()
+	pid := coinName + "_" + guid
+	meta := db.NewJPGMeta(pid+config.Public.Pic.PicNameSuffixOriginal, 0, 0)
+	dirOriginal := db.GetUserPicDir(coinName, meta)
+	_, err = util.SaveFileTo(header, dirOriginal)
+	if err != nil {
+		os.Remove(dirOriginal)
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
-	sumByte := hash.Sum(nil)
-	sum := hex.EncodeToString(sumByte)
+
+	//取得hash值
+	checksum, err := util.GetHash256(dirOriginal)
+	if err != nil {
+		os.Remove(dirOriginal)
+		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
+	}
 
 	//检查图片hash是否已经存在于数据库
-	img := db.Img{Hash: sum}
+	img := db.Img{Hash: checksum}
 	has, err := pq.Get(&img)
 	if err != nil {
 		util.LogDebugAll(err)
+		os.Remove(dirOriginal)
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
 	if has == true {
 		//图片已经存在
+		os.Remove(dirOriginal)
 		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1038)
 	}
 
 	//新的client_hash
 	img.Owner = coinName
-	img.GUID = xid.New().String()
-	//临时保存原图到路径：./files/udata/鸟币号/pic/鸟币号_guid-original.jpg
-	pid := coinName + "_" + img.GUID
-	meta := db.NewJPGMeta(pid+config.Public.Pic.PicNameSuffixOriginal, 0, 0)
-	dirOriginal := db.GetUserPicDir(coinName, meta)
-	fileBuf, err := ioutil.ReadAll(file)
-	if err != nil {
-		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
-	}
-	if ioutil.WriteFile(dirOriginal, fileBuf, os.ModePerm) != nil {
-		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1015)
-	}
+	img.GUID = guid
 	img.OriginalDir = dirOriginal
 	ctx.JSON(&img)
 

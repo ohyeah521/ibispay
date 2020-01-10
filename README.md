@@ -1,7 +1,3 @@
-# The work is approaching completion !
-
----
-以下暂未整理。
 # 部署注意事项
 
 - 部署时 安装golang

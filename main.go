@@ -105,8 +105,8 @@ func main() {
 	{
 		img.Use(jwtHandler.Serve)
 		{
-			img.Get("/exist/{hash:string max(32)}", controller.CheckPicHash) //检查图片是否存在
-			img.Post("/new", picSizeHandler, controller.NewPic)              //上传图片
+			img.Get("/exist/{hash:string range(64,64) else 400}", controller.CheckPicHash) //检查图片是否存在
+			img.Post("/new", picSizeHandler, controller.NewPic)                            //上传图片
 		}
 	}
 

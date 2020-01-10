@@ -12,7 +12,7 @@
  Target Server Version : 110005
  File Encoding         : 65001
 
- Date: 06/01/2020 18:24:11
+ Date: 11/01/2020 00:40:08
 */
 
 
@@ -260,14 +260,14 @@ COMMENT ON TABLE "public"."coin" IS 'Coin 对应coin表，此表不可删除
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."img";
 CREATE TABLE "public"."img" (
-  "hash" varchar(32) COLLATE "pg_catalog"."default" NOT NULL,
+  "hash" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
   "owner" varchar(20) COLLATE "pg_catalog"."default" NOT NULL,
   "guid" varchar(36) COLLATE "pg_catalog"."default" NOT NULL,
   "thumb" jsonb NOT NULL
 )
 ;
 ALTER TABLE "public"."img" OWNER TO "postgres";
-COMMENT ON COLUMN "public"."img"."hash" IS '客户端上传的原图的 md5 hash 值，注意是原图。';
+COMMENT ON COLUMN "public"."img"."hash" IS '客户端上传的原图的hash值，BLAKE2算法，注意是原图。';
 COMMENT ON COLUMN "public"."img"."owner" IS '鸟币号';
 COMMENT ON COLUMN "public"."img"."guid" IS '图片唯一id';
 COMMENT ON COLUMN "public"."img"."thumb" IS '缩略图属性';
@@ -564,7 +564,7 @@ ALTER SEQUENCE "public"."repay_id_seq"
 OWNED BY "public"."repay"."id";
 SELECT setval('"public"."repay_id_seq"', 17, true);
 SELECT setval('"public"."req_id_seq"', 50, true);
-SELECT setval('"public"."skill_id_seq"', 117, true);
+SELECT setval('"public"."skill_id_seq"', 126, true);
 SELECT setval('"public"."snap_id_seq"', 29, true);
 SELECT setval('"public"."snap_set_id_seq"', 27, true);
 ALTER SEQUENCE "public"."sub_sum_id_seq"
