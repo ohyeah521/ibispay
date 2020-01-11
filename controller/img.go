@@ -51,7 +51,8 @@ func NewPic(ctx iris.Context) {
 	if has == true {
 		//图片已经存在
 		os.Remove(dirOriginal)
-		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1038)
+		ctx.JSON(&img)
+		return
 	}
 
 	//新的client_hash

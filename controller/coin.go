@@ -185,22 +185,18 @@ func UpdateAvatar(ctx iris.Context) {
 	coinName := GetJwtUser(ctx)[config.JwtNameKey].(string)
 
 	//-----1.接收原图，移动到：./files/udata/鸟币号/pic/鸟币号_avatar-original.jpg-----
-	file, _, err := ctx.FormFile("file")
+	_, fh, err := ctx.FormFile("file")
 	if err != nil {
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
-	defer file.Close()
 	//原图路径
 	pic := config.Public.Pic
 	meta := db.NewSquareJPGMeta(coinName+pic.AvatarSuffix+pic.PicNameSuffixOriginal, pic.AvatarSizeBiggest)
 	dirOriginal := db.GetUserPicDir(coinName, meta)
 	//保存原图
-	fileBuf, err := ioutil.ReadAll(file)
+	_, err = util.SaveFileTo(fh, dirOriginal)
 	if err != nil {
-		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
-	}
-	err = ioutil.WriteFile(dirOriginal, fileBuf, os.ModePerm)
-	if err != nil {
+		os.Remove(dirOriginal)
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
 

@@ -209,11 +209,18 @@ func (jobRMBExr) Run() {
 	//注意：不同国家需要使用各自国家的M2
 	//每隔一段时间，自动更新人民币m2，数据来自新浪财经
 	resp, err := http.Get("http://money.finance.sina.com.cn/mac/api/jsonp.php/SINAREMOTECALLCALLBACK/MacPage_Service.get_pagedata?cate=fininfo&event=1&from=0&num=1&condition")
+
+	//http响应失败时，resp变量将为 nil，而 err变量将是 non-nil。
+	//当得到一个重定向的错误时，两个变量都将是 non-nil。这意味着最后依然会内存泄露。
+	//防止内存泄漏的正确写法:
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		rmbExr = config.Public.Exr.RmbExr
 		return
 	}
-	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		rmbExr = config.Public.Exr.RmbExr
