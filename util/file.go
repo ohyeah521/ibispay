@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/blake2b"
 )
 
-const filechunk = 128
+const filechunk = 4096
 
 //SaveFileTo 保存文件到目录
 func SaveFileTo(fh *multipart.FileHeader, destDirectory string) (int64, error) {
