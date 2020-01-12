@@ -131,7 +131,7 @@ func NewSkill(ctx iris.Context, form model.NewSkillForm) {
 }
 
 //UpdateSkill 更新技能
-//更新技能时，拖放图片直接上传，服务器返回图片hash值给前端，请求时仅带上图片的hash数组
+//更新技能时，拖放图片直接上传，服务器返回图片hash值给前端，请求时仅带上图片的hash数组而不带图片
 func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
 	e := new(model.CommonError)
 	pq := GetPQ(ctx)
@@ -148,10 +148,10 @@ func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
 	}()
 
 	//检查是否是本人账号更新
-	has, err := pq.Exist(&db.Skill{ID: form.SkillID, Owner: coinName})
-	if err != nil {
-		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
-	}
+	sid := form.SkillID
+	skill := db.Skill{ID: sid, Owner: coinName}
+	has, err := pq.Get(&skill)
+	e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
 	if has == false {
 		e.ReturnError(ctx, iris.StatusInternalServerError, config.Public.Err.E1037)
 	}
@@ -167,10 +167,12 @@ func UpdateSkill(ctx iris.Context, form model.UpdateSkillForm) {
 			pics = append(pics, img.Thumb)
 		}
 	}
-	skill := db.Skill{Price: form.Price, Desc: form.Desc, Tags: form.Tags, Pics: pics}
-	affected, err := pq.ID(form.SkillID).Cols("price,desc,tags,pics").Update(&skill)
-	if affected == 0 || err != nil {
-		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1004)
+
+	skill = db.Skill{Price: form.Price, Desc: form.Desc, Tags: form.Tags, Pics: pics, Version: skill.Version}
+	affected, err := pq.ID(sid).Update(&skill)
+	e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
+	if affected == 0 {
+		e.ReturnError(ctx, iris.StatusOK, config.Public.Err.E1039)
 	}
 
 	ctx.JSON(&model.UpdateRes{Ok: true})

@@ -13,7 +13,7 @@ type UpdateSkillForm struct {
 	SkillID uint64   `json:"skillID" validate:"required,numeric" format:"num,trim"`     //技能ID
 	Price   uint64   `json:"price" validate:"required,numeric,gte=1" format:"num,trim"` //技能价格（鸟币数/单位），大于0的整数，必填
 	Desc    string   `json:"desc,omitempty" validate:"lte=1000" format:"ucfirst,trim"`  //技能描述，少于1000个字符
-	Tags    []string `json:"tags,omitempty" validate:"lte=10,unique,dive,required"`     //类型如：技能、实物、服务、数字商品等，或者其他自定义标签
+	Tags    []string `json:"tags,omitempty" validate:"lte=5,unique,dive,required"`      //类型如：技能、实物、服务、数字商品等，或者其他自定义标签
 	Pics    []string `json:"pics,omitempty" validate:"lte=9,unique,dive,required"`      //图片的hash数组，图片最多上传9张
 }
 

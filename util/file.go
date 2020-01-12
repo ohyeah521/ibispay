@@ -1,16 +1,17 @@
 package util
 
 import (
+	"bufio"
 	"encoding/hex"
 	"io"
-	"math"
 	"mime/multipart"
 	"os"
 
+	"github.com/thinkeridea/go-extend/exbytes"
 	"golang.org/x/crypto/blake2b"
 )
 
-const filechunk = 4096
+const filechunk = 65536
 
 //SaveFileTo 保存文件到目录
 func SaveFileTo(fh *multipart.FileHeader, destDirectory string) (int64, error) {
@@ -29,68 +30,62 @@ func SaveFileTo(fh *multipart.FileHeader, destDirectory string) (int64, error) {
 	return io.Copy(out, src)
 }
 
-// GetHash256 计算文件的hash值，采用blake2b算法。分片读取文件，性能比io.copy略高。
+// GetHash256 计算文件的hash值，采用blake2b算法
 func GetHash256(filename string) (string, error) {
-	// Open the file for reading
-	file, err := os.Open(filename)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	// Get file info
-	info, err := file.Stat()
-	if err != nil {
-		return "", err
-	}
-
-	// Get the filesize
-	filesize := info.Size()
-
-	// Calculate the number of blocks
-	blocks := uint64(math.Ceil(float64(filesize) / float64(filechunk)))
-
 	// Start hash
 	hash, err := blake2b.New256(nil)
 	if err != nil {
 		return "", err
 	}
 
-	// Check each block
-	for i := uint64(0); i < blocks; i++ {
-		// Calculate block size
-		blocksize := int(math.Min(filechunk, float64(filesize-int64(i*filechunk))))
-
-		// Make a buffer
-		buf := make([]byte, blocksize)
-
-		// Make a buffer
-		file.Read(buf)
-
-		// Write to the buffer
-		io.WriteString(hash, string(buf))
+	err = ReadFile(filename, func(chunk []byte) {
+		io.WriteString(hash, exbytes.ToString(chunk))
+	})
+	if err != nil {
+		return "", err
 	}
-	checksum := hex.EncodeToString(hash.Sum(nil))
 
-	return checksum, nil
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
-//ReadBigFile 分片读取大文件
-func ReadBigFile(fileName string, handle func([]byte)) error {
+//ReadReader 使用bufio代替ioutil.ReadAll
+//bufio.NewReader(f)默认缓存4KB, 大于4KB用bufio.NewReaderSize(f,缓存大小)
+func ReadReader(rd io.Reader, handle func([]byte)) error {
+	bodyReader := bufio.NewReader(rd)
+	for {
+		block := make([]byte, 4096)
+		n, err := bodyReader.Read(block)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if 0 == n {
+			break
+		}
+		// Write to the buffer
+		handle(block[0:n])
+	}
+	return nil
+}
+
+//ReadFile 读取大文件，小文件可以使用ioutil.ReadFile
+func ReadFile(fileName string, handle func([]byte)) error {
 	f, err := os.Open(fileName)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	s := make([]byte, filechunk)
+
+	r := bufio.NewReaderSize(f, filechunk)
 	for {
-		switch nr, err := f.Read(s[:]); true {
-		case nr < 0:
+		block := make([]byte, filechunk)
+
+		switch n, err := r.Read(block); true {
+		case n < 0:
 			return err
-		case nr == 0: // EOF
+		case n == 0: // EOF
 			return nil
-		case nr > 0:
-			handle(s[0:nr])
+		case n > 0:
+			handle(block[0:n])
 		}
 	}
 }

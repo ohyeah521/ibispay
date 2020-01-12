@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thinkeridea/go-extend/exbytes"
+
 	"github.com/kr/beanstalk"
 
 	"github.com/go-xorm/xorm"
@@ -189,7 +191,7 @@ func NewPay(ctx iris.Context, form model.NewPayForm) {
 		hash := md5.New()
 		ids, err := json.Marshal(snapIDs)
 		checkDBErr(err)
-		_, err = io.Copy(hash, strings.NewReader(string(ids)))
+		_, err = io.Copy(hash, strings.NewReader(exbytes.ToString(ids)))
 		checkDBErr(err)
 		strMd5 := hex.EncodeToString(hash.Sum(nil))
 
@@ -293,7 +295,7 @@ func NewPay(ctx iris.Context, form model.NewPayForm) {
 				hash := md5.New()
 				ids, err := json.Marshal(snapIDs)
 				checkDBErr(err)
-				_, err = io.Copy(hash, strings.NewReader(string(ids)))
+				_, err = io.Copy(hash, strings.NewReader(exbytes.ToString(ids)))
 				checkDBErr(err)
 				strMd5 := hex.EncodeToString(hash.Sum(nil))
 				//转手时，发行者的snap_set一定存在，否则返回错误
@@ -628,7 +630,7 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 			subsums := []*db.SubSum{}
 			if useOtherSnaps == false {
 				//---1.消耗兑现时选择的版本的鸟币----
-				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("snap_ids @> ?", string(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
+				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("snap_ids @> ?", exbytes.ToString(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
 				checkDBErr(err)
 				util.LogDebug("useOtherSnaps=false")
 				util.LogDebugAll(subsums)
@@ -639,7 +641,7 @@ func NewRepay(ctx iris.Context, form model.NewRepayForm) {
 				}
 			} else {
 				//---2.消耗剩余的版本的鸟币（按倒序排列）---
-				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("NOT (snap_ids @> ?)", string(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
+				err := pq.Where("coin = ? and bearer = ? and sum > ?", txCoin, bearer, 0).And("NOT (snap_ids @> ?)", exbytes.ToString(data)).Desc("snap_set_id").Limit(limit, start).Find(&subsums)
 				checkDBErr(err)
 				util.LogDebug("useOtherSnaps=true")
 				util.LogDebugAll(subsums)

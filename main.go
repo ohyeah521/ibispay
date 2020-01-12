@@ -1,13 +1,16 @@
 package main //niaobi.org by 鸟神
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/thinkeridea/go-extend/exbytes"
 
 	"github.com/beanstalkd/go-beanstalk"
 	"github.com/go-xorm/xorm"
@@ -18,6 +21,7 @@ import (
 	"github.com/kataras/iris/middleware/recover"
 	_ "github.com/lib/pq"
 	"github.com/robfig/cron"
+	"github.com/thinkeridea/go-extend/exstrings"
 
 	"reqing.org/ibispay/config"
 	"reqing.org/ibispay/controller"
@@ -210,9 +214,11 @@ func (jobRMBExr) Run() {
 	//每隔一段时间，自动更新人民币m2，数据来自新浪财经
 	resp, err := http.Get("http://money.finance.sina.com.cn/mac/api/jsonp.php/SINAREMOTECALLCALLBACK/MacPage_Service.get_pagedata?cate=fininfo&event=1&from=0&num=1&condition")
 
-	//http响应失败时，resp变量将为 nil，而 err变量将是 non-nil。
-	//当得到一个重定向的错误时，两个变量都将是 non-nil。这意味着最后依然会内存泄露。
-	//防止内存泄漏的正确写法:
+	/**
+	http响应失败时，resp变量将为 nil，而 err变量将是 non-nil。
+	当得到一个重定向的错误时，两个变量都将是 non-nil。这意味着最后依然会内存泄露。
+	防止内存泄漏的正确写法:
+	*/
 	if resp != nil {
 		defer resp.Body.Close()
 	}
@@ -221,17 +227,22 @@ func (jobRMBExr) Run() {
 		return
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	//统一写法，使用流式读取代替ioutil.ReadAll
+	str := bytes.NewBufferString("")
+	err = util.ReadReader(resp.Body, func(block []byte) {
+		str.WriteString(exbytes.ToString(block))
+	})
 	if err != nil {
 		rmbExr = config.Public.Exr.RmbExr
 		return
 	}
 
 	//格式整理
-	str := string(body)
-	newstr := str[strings.LastIndex(str, "data:"):]
-	newstr = util.SubString(newstr, 6, len(newstr)-10)
+	s := str.String()
+	newstr := s[strings.LastIndex(s, "data:"):]
+	newstr = exstrings.SubString(newstr, 6, len(newstr)-10)
 	util.LogDebug(newstr)
+
 	var arr []string
 	json.Unmarshal([]byte(newstr), &arr)
 	if err != nil {
@@ -247,6 +258,11 @@ func (jobRMBExr) Run() {
 	if rmbExr < config.Public.Exr.RmbExr {
 		rmbExr = config.Public.Exr.RmbExr
 	}
+}
+func streamToString(stream io.Reader) string {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(stream)
+	return buf.String()
 }
 
 //超时未接受的兑现请求处理

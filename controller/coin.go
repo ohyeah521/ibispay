@@ -189,14 +189,23 @@ func UpdateAvatar(ctx iris.Context) {
 	if err != nil {
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
+
 	//原图路径
 	pic := config.Public.Pic
 	meta := db.NewSquareJPGMeta(coinName+pic.AvatarSuffix+pic.PicNameSuffixOriginal, pic.AvatarSizeBiggest)
 	dirOriginal := db.GetUserPicDir(coinName, meta)
+
+	var delPic = func(err error) bool {
+		if err != nil {
+			os.Remove(dirOriginal)
+			return true
+		}
+		return false
+	}
+
 	//保存原图
 	_, err = util.SaveFileTo(fh, dirOriginal)
-	if err != nil {
-		os.Remove(dirOriginal)
+	if delPic(err) {
 		e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1015, nil)
 	}
 
@@ -207,13 +216,6 @@ func UpdateAvatar(ctx iris.Context) {
 		Large:   db.NewSquareJPGMeta(coinName+pic.AvatarSuffix+guid+pic.PicNameSuffixLarge, pic.AvatarSizeLarge),
 		Middle:  db.NewSquareJPGMeta(coinName+pic.AvatarSuffix+guid+pic.PicNameSuffixMiddle, pic.AvatarSizeMiddle),
 		Small:   db.NewSquareJPGMeta(coinName+pic.AvatarSuffix+guid+pic.PicNameSuffixSmall, pic.AvatarSizeSmall),
-	}
-	var delPic = func(err error) bool {
-		if err != nil {
-			os.Remove(dirOriginal)
-			return true
-		}
-		return false
 	}
 
 	//获取图片宽高信息
@@ -261,7 +263,7 @@ func UpdateAvatar(ctx iris.Context) {
 	//-----3.更新数据库------
 	//获取老头像
 	coin := db.Coin{}
-	_, err = pq.ID(cid).Get(&coin)
+	_, err = pq.ID(cid).Cols("avatar").Get(&coin)
 	e.CheckError(ctx, err, iris.StatusInternalServerError, config.Public.Err.E1004, nil)
 	oldAvatars := coin.Avatar
 	coin.Avatar = avatar

@@ -1,8 +1,8 @@
 package config
 
 import (
-	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/kezhuw/toml"
@@ -133,12 +133,12 @@ var Public TomlConfig
 
 //Load 初始化配置
 func Load() {
-	var buffer bytes.Buffer
-	readFile("config.toml", func(buf []byte) {
-		buffer.Write(buf)
-	})
+	buf, err := ioutil.ReadFile("config.toml")
+	if err != nil {
+		panic(err)
+	}
 
-	err := toml.Unmarshal(buffer.Bytes(), &Public)
+	err = toml.Unmarshal(buf, &Public)
 	if err != nil {
 		panic(err)
 	}
@@ -154,24 +154,4 @@ func Load() {
 	//建立文件夹
 	os.MkdirAll(Public.Dir.DataDir, os.ModePerm)
 	os.Chmod(Public.Dir.DataDir, os.ModePerm)
-}
-
-// 分片文件
-func readFile(fileName string, handle func([]byte)) error {
-	f, err := os.Open(fileName)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	s := make([]byte, 4096)
-	for {
-		switch nr, err := f.Read(s[:]); true {
-		case nr < 0:
-			return err
-		case nr == 0: // EOF
-			return nil
-		case nr > 0:
-			handle(s[0:nr])
-		}
-	}
 }
